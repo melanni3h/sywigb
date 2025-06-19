@@ -1,0 +1,2609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Classic Macintosh Interface</title>
+    <style>
+        @import url('https://fonts.cdnfonts.com/css/chicago-2');
+        
+        body {
+            margin: 0;
+            font-family: 'Chicago', 'Courier New', monospace;
+            background-color: #222;
+            height: 100vh;
+        }
+
+        /* Desktop Styles */
+        .desktop {
+            position: relative;
+            width: 800px;
+            height: 600px;
+            margin: 5% auto;
+            background-color: #fff;
+            border: 2px solid #000;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+            overflow: auto;
+            background-image: radial-gradient(#000 1px, transparent 0);
+            background-size: 4px 4px;
+            display: block;
+        }
+
+        .mobile {
+            display: none;
+            background-color: #fff;
+            background-image: radial-gradient(#000 1px, transparent 0);
+            background-size: 4px 4px;
+            min-height: 100vh;
+        }
+
+        .menu-bar {
+            position: relative;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: #fff;
+            border-bottom: 2px solid #000;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            z-index: 100;
+        }
+
+        .menu-item {
+            margin-right: 15px;
+            cursor: pointer;
+        }
+
+        .window {
+            position: absolute;
+            width: 400px;
+            background-color: #fff;
+            border: 2px solid #000;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.4);
+            z-index: 10;
+        }
+
+        .title-bar {
+            background-color: #fff;
+            border-bottom: 2px solid #000;
+            height: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: grab;
+            position: relative;
+            font-family: 'Chicago', sans-serif;
+        }
+
+        .title-bar:active {
+            cursor: grabbing;
+        }
+
+        .title-bar .title {
+            font-size: 12px;
+            text-align: center;
+            flex: 1;
+            margin-top: 2px;
+        }
+
+        .title-bar:after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 2px;
+            background: repeating-linear-gradient(
+                to right,
+                #000,
+                #000 2px,
+                transparent 2px,
+                transparent 4px
+            );
+        }
+
+        .close-box {
+            width: 12px;
+            height: 12px;
+            border: 2px solid #000;
+            margin-left: 5px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .close-box::before {
+            content: '';
+            position: absolute;
+            width: 7px;
+            height: 7px;
+            border: 2px solid #000;
+            top: 0.5px;
+            left: 0.5px;
+        }
+
+        .resize-box {
+            width: 12px;
+            height: 12px;
+            border: 2px solid #000;
+            margin-right: 5px;
+            cursor: nwse-resize;
+        }
+
+        .content {
+            flex: 1;
+            padding: 10px;
+            overflow: auto;
+            background-color: #fff;
+            position: relative;
+            font-family: 'Courier New', monospace;
+        }
+
+        #mixer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        button.btn {
+            font-family: 'Chicago', 'Courier New', monospace;
+            background-color: #fff;
+            color: #000;
+            border: 2px solid #000;
+            border-radius: 3px;
+            padding: 3px 8px;
+            cursor: pointer;
+            font-size: 12px;
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+            margin-top: 10px;
+        }
+
+        button.btn:active {
+            box-shadow: none;
+            transform: translate(1px, 1px);
+        }
+
+        .slider-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 10px;
+        }
+
+        .mac-slider {
+            width: 24px;
+            height: 110px;
+            position: relative;
+            background-color: #fff;
+            border: 2px solid #000;
+            border-radius: 2px;
+        }
+
+        .slider-track {
+            position: absolute;
+            width: 10px;
+            height: 90px;
+            background-color: #fff;
+            border: 2px solid #000;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .slider-thumb {
+            position: absolute;
+            width: 20px;
+            height: 14px;
+            background-color: #fff;
+            border: 2px solid #000;
+            border-radius: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+            cursor: ns-resize;
+        }
+
+        .slider-thumb::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 2px;
+            background-color: #000;
+            top: 6px;
+            left: 4px;
+        }
+
+        .slider-label {
+            font-size: 10px;
+            text-align: center;
+            margin-top: 5px;
+            width: 100%;
+            font-weight: bold;
+        }
+
+        .desktop-icon {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 64px;
+            cursor: pointer;
+        }
+
+        .icon-image {
+            width: 32px;
+            height: 32px;
+            border: 2px solid #000;
+            background-color: #fff;
+            margin-bottom: 5px;
+        }
+
+        .icon-label {
+            text-align: center;
+            font-size: 10px;
+            color: #000;
+            background-color: #fff;
+            padding: 2px;
+        }
+        
+        .mixer-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        
+        .mixer-title {
+            font-size: 12px;
+            text-align: center;
+            width: 95%;
+            border-top: 2px solid #000;
+            border-bottom: 2px solid #000;
+            padding: 4px 0;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        
+        .volume-sliders {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            height: 150px;
+            margin-bottom: 20px;
+        }
+
+        .loading-indicator {
+            font-size: 10px;
+            margin-top: 5px;
+            text-align: center;
+        }
+        
+        /* Orb Game Styles */
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+        }
+        
+        .game-screen {
+            width: 240px;
+            height: 360px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            background-color: #fff;
+            border: 2px solid #000;
+            border-radius: 50%;
+        }
+        
+        .dialogue-box {
+            width: 260px;
+            height: 60px;
+            border: 2px solid #000;
+            background-color: #fff;
+            padding: 5px;
+            font-size: 10px;
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+        }
+        
+        .question-input {
+            width: 260px;
+            font-family: 'Courier New', monospace;
+            font-size: 10px;
+            border: 2px solid #000;
+            padding: 5px;
+            margin-top: 5px;
+        }
+        
+        .ask-button {
+            margin-top: 5px;
+            width: 60px;
+        }
+        .mac-menu-bar {
+            width: 100%;
+            border-bottom: 2px solid black;
+            margin-bottom: 10px;
+        }
+
+        .mac-menu {
+            width: 100%;
+            position: relative;
+            display: inline-block;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .mac-menu-title {
+            display: block;
+            padding: 2px 5px;
+            border: 2px solid black;
+            background: white;
+            font-size: 10px;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .mac-menu-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            border: 2px solid black;
+            background: white;
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+            z-index: 1000;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .mac-menu-dropdown ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .mac-menu-dropdown li {
+            font-size: 10px;
+            padding: 2px 5px;
+            border-bottom: 1px solid black;
+        }
+
+        .mac-menu-dropdown li:last-child {
+            border-bottom: none;
+        }
+
+        .mac-menu-dropdown li.selected {
+            background-color: black;
+            color: white;
+        }
+
+        .mac-menu-dropdown li.disabled {
+            color: #888;
+            cursor: not-allowed;
+        }
+
+        .mac-menu-dropdown li:not(.disabled):hover {
+            background-color: #000;
+            color: white;
+        }
+
+        .mac-menu:hover .mac-menu-dropdown {
+            display: block;
+        }
+
+        /*
+        Mobile Song Menu Styles
+        */
+        .mobile-song-menu {
+        position: relative;
+        width: 100%;
+        margin: 0;
+        font-family: 'Chicago', 'Courier New', monospace;
+        }
+
+        .mobile-song-button {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 5px 12px;
+        background-color: #fff;
+        border: none;
+        border-bottom: 2px solid #000;
+        font-size: 12px;
+        text-align: left;
+        cursor: pointer;
+        box-sizing: border-box;
+        }
+
+        .mobile-song-button .arrow {
+        transition: transform 0.2s ease;
+        }
+
+        .mobile-song-dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        max-height: 0;
+        overflow: hidden;
+        background-color: #fff;
+        border: none;
+        border-bottom: 2px solid #000;
+        z-index: 1020; /* Higher than scrollbar and other elements */
+        transition: max-height 0.3s ease-out;
+        box-sizing: border-box;
+        }
+
+        .mobile-song-dropdown.open {
+        max-height: 250px;
+        overflow-y: auto;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .mobile-song-dropdown .song-item {
+        padding: 10px 12px;
+        border-bottom: 1px solid #ddd;
+        font-size: 12px;
+        box-sizing: border-box;
+        width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        }
+
+        .mobile-song-dropdown .song-item:last-child {
+        border-bottom: none;
+        }
+
+        .mobile-song-dropdown .song-item:active {
+        background-color: #000;
+        color: #fff;
+        }
+
+        .mobile-song-dropdown .song-item.disabled {
+        color: #888;
+        cursor: not-allowed;
+        }
+
+        .mobile-song-dropdown .title {
+        font-weight: normal;
+        }
+
+        /* Updated content styling */
+        .content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 250px;
+            padding: 10px;
+        }
+
+        #volume-sliders {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
+        /* Mobile Styles */
+        .mobile {
+            background-color: #fff;
+            background-image: radial-gradient(#000 1px, transparent 0);
+            background-size: 4px 4px;
+        }
+
+        /* Add spacing between mobile menu bar and content area */
+        .mobile-menu-bar {
+            margin-bottom: 10px;
+            background-color: rgba(255, 255, 255, 0.9);  /* Slightly transparent */
+            backdrop-filter: blur(2px);  /* Slight blur effect for modern browsers */
+            position: sticky;
+            top: 0;
+            z-index: 110;  /* Higher than other elements */
+            border-bottom: 2px solid #000;
+        }
+
+        /* Add spacing and shadows to mobile windows */
+        .mobile-window {
+            width: 95%;
+            margin: 0 auto 15px auto;  /* Center and add bottom margin */
+            background-color: #fff;
+            border: 2px solid #000;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.4);  /* Same shadow as desktop */
+            border-radius: 2px;  /* Slight rounding for smoother look */
+            z-index: 100; /* Ensure window is above others when active */
+            overflow: visible; /* Allow dropdown to be visible */
+        }
+        
+        .song-item {
+        padding: 10px 12px;
+        border-bottom: 1px solid #ddd;
+        font-size: 12px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 100%; /* Force full width */
+        box-sizing: border-box; /* Include padding in width calculation */
+        }
+
+        .mobile-menu-bar {
+            background-color: #fff;
+            border-bottom: 2px solid #000;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            z-index: 100;
+            position: sticky;
+            top: 0;
+        }
+        
+        .mobile-content-area {
+            height: calc(100vh - 30px);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            position: relative;
+        }
+        
+        .mobile-title-bar {
+            background-color: #fff;
+            border-bottom: 2px solid #000;
+            height: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 10px;
+            position: relative;
+        }
+
+        .mobile-title-bar:after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 2px;
+            background: repeating-linear-gradient(
+                to right,
+                #000,
+                #000 2px,
+                transparent 2px,
+                transparent 4px
+            );
+            z-index: 5; /* Ensure it appears above other elements */
+        }
+        
+        .mobile-title-bar .title {
+            font-size: 14px;
+            text-align: center;
+            flex: 1;
+            margin-top: 2px; /* Add a slight top margin like in desktop */
+        }
+        
+        .mobile-close-box {
+            width: 16px;
+            height: 16px;
+            border: 2px solid #000;
+            position: relative;
+        }
+        
+        .mobile-close-box::before {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border: 2px solid #000;
+            top: 1px;
+            left: 1px;
+        }
+        
+        .mobile-content {
+            padding: 15px;
+            overflow: auto;
+            background-color: #fff;
+            transition: max-height 0.3s ease-out;
+        }
+        
+        .mobile-collapsed {
+            max-height: 0 !important;
+            padding: 0 !important;
+            overflow: hidden !important;
+            border-top: none !important;
+            margin: 0 !important;
+        }
+        .mobile-content.mobile-collapsed {
+            border-bottom: none !important;
+            border-top: none !important;
+        }
+        
+        /* Mobile sliders */
+        .mobile-slider-container {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+        
+        .mobile-slider-label {
+            font-size: 12px;
+            font-weight: bold;
+            width: 60px;
+            flex-shrink: 0;
+        }
+        
+        .horizontal-slider {
+            flex: 1;
+            height: 28px;
+            position: relative;
+            margin: 0 10px;
+        }
+        
+        .horizontal-track {
+            position: absolute;
+            width: 100%;
+            height: 10px;
+            background-color: #fff;
+            border: 2px solid #000;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .horizontal-thumb {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background-color: #fff;
+            border: 2px solid #000;
+            border-radius: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+        }
+        
+        /* Mobile orb styles */
+        .mobile-game-screen {
+            width: 200px;
+            height: 200px;
+            margin: 10px auto;
+            position: relative;
+            overflow: hidden;
+            background-color: #fff;
+            border: 2px solid #000;
+            border-radius: 50%;
+        }
+        
+        .mobile-dialogue-box {
+            width: 100%;
+            min-height: 60px;
+            border: 2px solid #000;
+            background-color: #fff;
+            padding: 8px;
+            font-size: 12px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            box-sizing: border-box;
+        }
+        
+        .mobile-question-input {
+            width: 100%;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            border: 2px solid #000;
+            padding: 8px;
+            margin-top: 10px;
+            box-sizing: border-box;
+        }
+        
+        .mobile-btn {
+            font-family: 'Chicago', 'Courier New', monospace;
+            background-color: #fff;
+            color: #000;
+            border: 2px solid #000;
+            border-radius: 3px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 14px;
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+            margin: 10px auto;
+            display: block;
+        }
+        
+        .mobile-btn:active {
+            box-shadow: none;
+            transform: translate(1px, 1px);
+        }
+        
+        /* Mobile log table */
+        .mobile-log-table {
+            width: 100%;
+            font-size: 12px;
+            border-collapse: collapse;
+        }
+        
+        .mobile-log-table th, .mobile-log-table td {
+            text-align: left;
+            padding: 6px;
+            border-bottom: 1px solid #000;
+        }
+        
+        .mobile-log-table th {
+            font-weight: bold;
+        }
+        
+        /* Custom scrollbar for mobile */
+        .mobile-custom-scrollbar {
+            position: fixed;
+            right: 0;  /* Keep at the edge */
+            top: 40px;  /* Add extra space from top to account for menu bar margin */
+            bottom: 0;
+            width: 20px;
+            background-color: #fff;
+            border-left: 2px solid #000;
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+        }
+        
+        .mobile-scroll-arrow {
+            height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #fff;
+            border-bottom: 2px solid #000;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .mobile-scroll-track {
+            flex: 1;
+            position: relative;
+        }
+        
+        .mobile-scroll-thumb {
+            position: absolute;
+            width: 16px;
+            height: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #fff;
+            border: 2px solid #000;
+            cursor: pointer;
+        }
+        #mobile-logo-icon {
+            width: 18px;
+            height: 15px;
+            margin-right: 10px;
+            display: inline-block;
+        }
+
+        /* For mobile windows - add right padding to provide space from the scrollbar */
+        .mobile-content {
+            padding: 15px 35px 15px 15px; /* Top Right Bottom Left */
+            overflow: auto;
+            background-color: #fff;
+            transition: max-height 0.3s ease-out;
+        }
+
+        /* Adjust the mobile content area to account for the scrollbar */
+        .mobile-content-area {
+            height: calc(100vh - 30px);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            position: relative;
+            padding-right: 20px; /* Add padding to the right edge */
+        }
+
+        /* For the orb game container in mobile */
+        .mobile-window .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 95%; /* Slightly reduced width to avoid touching scrollbar */
+            margin: 0 auto; /* Center content */
+            box-sizing: border-box;
+        }
+
+        /* For the log table in mobile */
+        .mobile-log-table {
+            width: 95%;
+            margin: 0 auto;
+            font-size: 12px;
+            border-collapse: collapse;
+        }
+
+        /* Make sure the sliders don't extend too close to the scrollbar */
+        .mobile-slider-container {
+            display: flex;
+            align-items: center;
+            width: 95%; /* Reduced width */
+            margin-bottom: 15px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Update mobile input to match container width */
+        .mobile-question-input {
+            width: 95%;
+            margin-left: auto;
+            margin-right: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            border: 2px solid #000;
+            padding: 8px;
+            margin-top: 10px;
+            box-sizing: border-box;
+        }
+
+        /* Update mobile dialogue box to match container width */
+        .mobile-dialogue-box {
+            width: 95%;
+            margin-left: auto;
+            margin-right: auto;
+            min-height: 60px;
+            border: 2px solid #000;
+            background-color: #fff;
+            padding: 8px;
+            font-size: 12px;
+            font-family: 'Courier New', monospace;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        /* Position the scrollbar firmly to the right edge */
+        .mobile-custom-scrollbar {
+            position: fixed;
+            right: 0;
+            top: 30px;
+            bottom: 0;
+            width: 20px;
+            background-color: #fff;
+            border-left: 2px solid #000;
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        
+        /* Device detection and responsive layout */
+        @media (max-width: 800px) {
+            .desktop {
+                display: none;
+            }
+            
+            .mobile {
+                display: block;
+            }
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/addons/p5.sound.min.js"></script>
+</head>
+<body>
+    <!-- Desktop Version -->
+    <div class="desktop">
+        <div class="menu-bar">
+            <span class="menu-item" id="logo-icon"></span>
+        </div>
+        
+        <!-- Desktop icons -->
+        <div class="desktop-icon" style="top: 200px; right:50px;">
+            <div class="icon-image" id="log-book-icon"></div>
+            <div class="icon-label">User Log</div>
+        </div>
+        
+        <div class="desktop-icon" style="top: 40px; right: 50px;">
+            <div class="icon-image" id="mixer-icon"></div>
+            <div class="icon-label">Mixer</div>
+        </div>
+        
+        <div class="desktop-icon" style="top: 120px; right: 50px;">
+            <div class="icon-image" id="orb-icon"></div>
+            <div class="icon-label">Orb</div>
+        </div>
+        
+        <!-- Audio Mixer Window -->
+        <div class="window" id="window1" style="top: 50px; left: 100px; height: 300px;">
+            <div class="title-bar" id="title-bar1">
+                <div class="close-box"></div>
+                <span class="title">Audio Mixer</span>
+            </div>
+            <div class="mac-menu-bar">
+                <div class="mac-menu">
+                    <div class="mac-menu-title" id="current-track">Track 1: Default Mix</div>
+                    <div class="mac-menu-dropdown">
+                        <ul>
+                            <li data-track="Track 1: Default Mix" class="selected">Track 1: Default Mix</li>
+                            <li data-track="Track 2: Coming Soon" class="disabled">Track 2: Coming Soon</li>
+                            <li data-track="Track 3: Coming Soon" class="disabled">Track 3: Coming Soon</li>
+                            <li data-track="Track 4: Coming Soon" class="disabled">Track 4: Coming Soon</li>
+                            <li data-track="Track 5: Coming Soon" class="disabled">Track 5: Coming Soon</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="content">
+                <div id="volume-sliders">
+                    <!-- Custom sliders will be inserted here -->
+                </div>
+                <button class="btn" id="play-button">PLAY</button>
+                <div class="loading-indicator" id="loading-status">Loading audio files...</div>
+            </div>
+        </div>
+        
+        <!-- Magic Orb Window -->
+        <div class="window" id="window2" style="top: 100px; left: 300px; display: none; width: 300px; height: 420px;">
+            <div class="title-bar" id="title-bar2">
+                <div class="close-box"></div>
+                <span class="title">Orb</span>
+            </div>
+            <div class="content">
+                <div class="game-container">
+                    <div class="game-screen" id="orb-canvas-container">
+                        <!-- Canvas will be inserted here by p5.js -->
+                    </div>
+                    <div class="dialogue-box" id="dialogue-box"></div>
+                    <input type="text" class="question-input" id="question-input" placeholder="Ask your question...">
+                    <button class="btn ask-button" id="ask-button">ASK</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- User Log -->
+        <div class="window" id="window3" style="top: 250px; left: 200px; display: none; width: 400px; height: 200px;">
+            <div class="title-bar" id="title-bar3">
+                <div class="close-box"></div>
+                <span class="title">User Log</span>
+            </div>
+            <div class="content" id="log-book-content">
+                <!-- Log entries will be dynamically added here -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Mobile Version -->
+    <div class="mobile">
+        <div class="mobile-menu-bar">
+            <span class="menu-item" id="mobile-logo-icon"></span>
+            <span class="menu-item"></span>
+        </div>        
+        
+        <div class="mobile-content-area" id="mobile-content-area">
+            <!-- Audio Mixer Window (Mobile) -->
+            <div class="mobile-window" id="mobile-window1">
+                <div class="mobile-title-bar">
+                    <div class="mobile-close-box"></div>
+                    <span class="title">Audio Mixer</span>
+                </div>
+                <div class="mobile-content" id="mobile-content1">
+                    <div class="mac-menu-bar">
+                    </div>
+                    <div id="mobile-volume-sliders">
+                        <!-- Mobile sliders will be generated here -->
+                    </div>
+                    <button class="mobile-btn" id="mobile-play-button">PLAY</button>
+                    <div class="loading-indicator" id="mobile-loading-status">Loading audio files...</div>
+                </div>
+            </div>
+            
+            <!-- Magic Orb Window (Mobile) -->
+            <div class="mobile-window" id="mobile-window2">
+                <div class="mobile-title-bar">
+                    <div class="mobile-close-box"></div>
+                    <span class="title">Orb</span>
+                </div>
+                <div class="mobile-content" id="mobile-content2">
+                    <div class="game-container">
+                        <div class="mobile-game-screen" id="mobile-orb-canvas-container">
+                            <!-- Mobile orb canvas will be inserted here -->
+                        </div>
+                        <div class="mobile-dialogue-box" id="mobile-dialogue-box"></div>
+                        <input type="text" class="mobile-question-input" id="mobile-question-input" placeholder="Ask your question...">
+                        <button class="mobile-btn" id="mobile-ask-button">ASK</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- User Log (Mobile) -->
+            <div class="mobile-window" id="mobile-window3">
+                <div class="mobile-title-bar">
+                    <div class="mobile-close-box"></div>
+                    <span class="title">User Log</span>
+                </div>
+                <div class="mobile-content" id="mobile-content3">
+                    <div id="mobile-log-book-content">
+                        <!-- Mobile log entries will be dynamically added here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Custom scrollbar for mobile -->
+        <div class="mobile-custom-scrollbar">
+            <div class="mobile-scroll-arrow" id="mobile-scroll-up">▲</div>
+            <div class="mobile-scroll-track">
+                <div class="mobile-scroll-thumb" id="mobile-scroll-thumb"></div>
+            </div>
+            <div class="mobile-scroll-arrow" id="mobile-scroll-down">▼</div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Detect if we're on mobile
+            const isMobile = window.innerWidth <= 800;
+
+            document.querySelector('.desktop').style.display = isMobile ? 'none' : 'block';
+            document.querySelector('.mobile').style.display = isMobile ? 'block' : 'none';
+    
+            
+            // Initialize Desktop Version
+            if (!isMobile) {
+                initDesktopIcons();
+                initDesktopAudioMixer();
+                initDesktopOrb();
+                initDesktopUserLog();
+                setupDesktopWindows();
+            }
+            
+            // Initialize Mobile Version
+            if (isMobile) {
+                initMobileLogo();
+                initMobileAudioMixer();
+                initMobileSongMenu();
+                fixMobileSongMenuOverflow();
+                initMobileOrb();
+                initMobileUserLog();
+                setupMobileWindows();
+                fixMobileWindowCollapse();
+                setupCustomScrollbar();
+            }
+            
+            // Window resize handler to switch between desktop and mobile
+            let lastViewMode = window.innerWidth <= 800 ? 'mobile' : 'desktop';
+
+            window.addEventListener('resize', function() {
+                // Determine current view mode
+                const currentViewMode = window.innerWidth <= 800 ? 'mobile' : 'desktop';
+                
+                // Check if we've crossed the threshold between desktop and mobile
+                if (currentViewMode !== lastViewMode) {
+                    console.log(`View mode changed from ${lastViewMode} to ${currentViewMode}`);
+                    
+                    // Update display
+                    if (currentViewMode === 'mobile') {
+                        document.querySelector('.desktop').style.display = 'none';
+                        document.querySelector('.mobile').style.display = 'block';
+                    } else {
+                        document.querySelector('.desktop').style.display = 'block';
+                        document.querySelector('.mobile').style.display = 'none';
+                    }
+                    
+                    // Store new view mode
+                    lastViewMode = currentViewMode;
+                    
+                    // Auto-refresh the page after a short delay
+                    // This ensures all components are properly reinitialized
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 300); // Small delay to allow display changes to be visible
+                }
+            });
+
+            
+            // ---- DESKTOP VERSION FUNCTIONS ----
+            
+            // Create Desktop Icons
+            function initDesktopIcons() {
+                // Logo Icon
+                new p5(function(p) {
+                    p.setup = function() {
+                        let iconCanvas = p.createCanvas(18, 15);
+                        iconCanvas.parent('logo-icon');
+                        p.background(220);
+                        p.strokeWeight(2);
+                        p.translate(-6,-6);
+                        p.rect(6,6, 18, 15);
+                        p.strokeWeight(3);
+                        p.line(9,9,9,18);
+                        p.line(13,9,13,18);
+                        p.line(13,18,21,18);
+                        p.line(17, 9, 17, 14);
+                        p.line(17,14, 21, 14);
+                        p.line(21,14, 21, 9);
+                    }
+                });
+                
+                // Mixer Icon
+                new p5(function(p) {
+                    p.setup = function() {
+                        let iconCanvas = p.createCanvas(32, 32);
+                        iconCanvas.parent('mixer-icon');
+                        p.background(255);
+                        p.stroke(0);
+                        p.strokeWeight(2);
+                        
+                        // Draw a stylized mixer/slider icon
+                        p.fill(255);
+                        p.rect(2, 2, 28, 28);
+                        
+                        // Vertical sliders
+                        p.strokeWeight(1);
+                        for (let i = 0; i < 3; i++) {
+                            let x = 8 + i * 8;
+                            // Slider track
+                            p.line(x, 8, x, 24);
+                            
+                            // Slider thumb
+                            p.fill(0);
+                            p.rect(x - 2, 14 + p.sin(i) * 4, 4, 4);
+                        }
+                    };
+                });
+                
+                // Orb Icon
+                new p5(function(p) {
+                    p.setup = function() {
+                        let iconCanvas = p.createCanvas(32, 32);
+                        iconCanvas.parent('orb-icon');
+                        p.background(255);
+                        p.stroke(0);
+                        p.strokeWeight(2);
+                        
+                        // Draw a mystical orb icon
+                        p.fill(255);
+                        p.ellipse(16, 16, 28, 28);
+                        
+                        // Mysterious pattern inside
+                        p.noFill();
+                        for (let i = 0; i < 3; i++) {
+                            p.ellipse(16, 16, 20 - i * 5, 20 - i * 5);
+                        }
+                        
+                        // Small highlight
+                        p.fill(0);
+                        p.ellipse(12, 12, 4, 4);
+                    };
+                });
+                
+                // Log Book Icon
+                new p5(function(p) {
+                    p.setup = function() {
+                        let iconCanvas = p.createCanvas(32, 32);
+                        iconCanvas.parent('log-book-icon');
+                        p.background(255);
+                        p.stroke(0);
+                        p.strokeWeight(2);
+                        
+                        // Draw a stylized book/log icon
+                        p.fill(255);
+                        p.rect(2, 2, 28, 24);
+                        p.line(2, 10, 30, 10);
+                        p.line(2, 18, 30, 18);
+                    };
+                });
+            }
+            // Initialize Desktop Audio Mixer
+            // Replace the current initDesktopAudioMixer function with this improved version
+            function initDesktopAudioMixer() {
+                // Create a new p5 instance for audio handling
+                new p5(function(p) {
+                    // Audio file paths - make sure these files exist in your assets folder
+                    const sounds = [
+                        'assets/DRUMS.mp3',
+                        'assets/BASS.mp3',
+                        'assets/GTRS.mp3',
+                        'assets/KEYS.mp3',
+                        'assets/VOX.mp3',
+                        'assets/BVOX.mp3'
+                    ];
+                    
+                    const names = ['DRUMS','BASS', 'GTRS', 'KEYS', 'VOX', 'BVOX'];
+                    const soundObjects = [];
+                    const sliderValues = Array(sounds.length).fill(1.0);
+                    let isPlaying = false;
+                    let filesLoaded = 0;
+                    let loadingFailed = false;
+                    
+                    p.preload = function() {
+                        // This ensures the audio context is created
+                        p.getAudioContext();
+                        
+                        // Load sounds
+                        for (let i = 0; i < sounds.length; i++) {
+                            try {
+                                const sound = p.loadSound(sounds[i], 
+                                    // Success callback
+                                    function() {
+                                        filesLoaded++;
+                                        updateLoadingStatus();
+                                    },
+                                    // Error callback
+                                    function(err) {
+                                        console.error("Failed to load sound:", err);
+                                        loadingFailed = true;
+                                        updateLoadingStatus();
+                                    }
+                                );
+                                soundObjects.push(sound);
+                            } catch (e) {
+                                console.error("Error loading sound:", e);
+                                loadingFailed = true;
+                                soundObjects.push(null); // Push null to maintain array length
+                                updateLoadingStatus();
+                            }
+                        }
+                    };
+                    
+                    p.setup = function() {
+                        // Create a small canvas just for p5.js to work with
+                        let canvas = p.createCanvas(1, 1);
+                        canvas.parent('volume-sliders');
+                        canvas.style('display', 'none');
+                        
+                        // Create custom sliders
+                        createCustomSliders();
+                        
+                        // Set up play button
+                        setupPlayButton();
+                        
+                        // Set initial volume for all sounds
+                        for (let i = 0; i < soundObjects.length; i++) {
+                            if (soundObjects[i] && soundObjects[i].isLoaded()) {
+                                soundObjects[i].setVolume(sliderValues[i]);
+                            }
+                        }
+                    };
+                    
+                    function updateLoadingStatus() {
+                        const loadingStatus = document.getElementById('loading-status');
+                        if (loadingFailed) {
+                            loadingStatus.textContent = "Failed to load some audio files. Check console for details.";
+                            loadingStatus.style.color = "red";
+                        } else if (filesLoaded === sounds.length) {
+                            loadingStatus.textContent = "All audio files loaded successfully!";
+                            setTimeout(() => {
+                                loadingStatus.style.display = "none";
+                            }, 2000);
+                        } else {
+                            loadingStatus.textContent = `Loading audio files... (${filesLoaded}/${sounds.length})`;
+                        }
+                    }
+                    
+                    function createCustomSliders() {
+                        const sliderContainer = document.getElementById('volume-sliders');
+                        
+                        // Clear existing sliders
+                        sliderContainer.innerHTML = '';
+                        
+                        for (let i = 0; i < names.length; i++) {
+                            const sliderDiv = document.createElement('div');
+                            sliderDiv.className = 'slider-container';
+                            
+                            const slider = document.createElement('div');
+                            slider.className = 'mac-slider';
+                            
+                            const track = document.createElement('div');
+                            track.className = 'slider-track';
+                            
+                            const thumb = document.createElement('div');
+                            thumb.className = 'slider-thumb';
+                            // Set initial position to match default value (0.5)
+                            thumb.style.top = '10px'; // Middle position (assuming track height is ~110px)
+                            thumb.dataset.index = i;
+                            
+                            const label = document.createElement('div');
+                            label.className = 'slider-label';
+                            label.textContent = names[i];
+                            
+                            slider.appendChild(track);
+                            slider.appendChild(thumb);
+                            sliderDiv.appendChild(slider);
+                            sliderDiv.appendChild(label);
+                            sliderContainer.appendChild(sliderDiv);
+                            
+                            // Make slider interactive
+                            thumb.addEventListener('mousedown', (e) => {
+                                thumb.dataset.dragging = true;
+                                e.preventDefault();
+                            });
+                        }
+                        
+                        // Global mouse events for dragging
+                        document.addEventListener('mousemove', (e) => {
+                            const thumbs = document.querySelectorAll('.slider-thumb');
+                            thumbs.forEach(thumbEl => {
+                                if (thumbEl.dataset.dragging === 'true') {
+                                    const index = parseInt(thumbEl.dataset.index);
+                                    const sliderEl = thumbEl.closest('.mac-slider');
+                                    const sliderRect = sliderEl.getBoundingClientRect();
+                                    
+                                    // Get track boundaries
+                                    const trackEl = sliderEl.querySelector('.slider-track');
+                                    const trackRect = trackEl.getBoundingClientRect();
+                                    
+                                    // Calculate thumb height with border
+                                    const thumbHeight = thumbEl.offsetHeight;
+                                    const halfThumbHeight = thumbHeight / 2;
+                                    
+                                    // Calculate track boundaries
+                                    const trackTop = trackRect.top - sliderRect.top;
+                                    const trackBottom = trackRect.bottom - sliderRect.top;
+                                    
+                                    // Calculate min and max positions
+                                    const minY = trackTop + halfThumbHeight;
+                                    const maxY = trackBottom - halfThumbHeight;
+                                    
+                                    // Calculate and constrain position
+                                    let y = e.clientY - sliderRect.top;
+                                    y = Math.max(minY, Math.min(maxY, y));
+                                    
+                                    // Calculate value (0-1)
+                                    // Flip so 0 is at bottom, 1 at top
+                                    const value = 1 - ((y - minY) / (maxY - minY));
+                                    
+                                    // Update thumb position
+                                    thumbEl.style.top = `${y - halfThumbHeight}px`;
+                                    
+                                    // Update volume
+                                    sliderValues[index] = value;
+                                    if (soundObjects[index] && soundObjects[index].isLoaded()) {
+                                        soundObjects[index].setVolume(value);
+                                    }
+                                }
+                            });
+                        });
+                        
+                        document.addEventListener('mouseup', () => {
+                            const thumbs = document.querySelectorAll('.slider-thumb');
+                            thumbs.forEach(thumbEl => {
+                                thumbEl.dataset.dragging = false;
+                            });
+                        });
+                    }
+                    
+                    function setupPlayButton() {
+                        const playButton = document.getElementById('play-button');
+                        
+                        playButton.addEventListener('click', () => {
+                            if (filesLoaded !== sounds.length) {
+                                alert("Please wait for all audio files to load.");
+                                return;
+                            }
+                            
+                            if (!isPlaying) {
+                                // Start playing all sounds
+                                for (let i = 0; i < soundObjects.length; i++) {
+                                    if (soundObjects[i] && soundObjects[i].isLoaded()) {
+                                        soundObjects[i].setVolume(sliderValues[i]);
+                                        
+                                        // If paused, resume from current position
+                                        if (soundObjects[i].isPaused()) {
+                                            soundObjects[i].play();
+                                        } else {
+                                            // Otherwise start looping
+                                            soundObjects[i].loop();
+                                        }
+                                    }
+                                }
+                                playButton.textContent = "STOP";
+                                isPlaying = true;
+                            } else {
+                                // Pause all sounds
+                                for (let i = 0; i < soundObjects.length; i++) {
+                                    if (soundObjects[i] && soundObjects[i].isPlaying()) {
+                                        soundObjects[i].pause();
+                                    }
+                                }
+                                playButton.textContent = "PLAY";
+                                isPlaying = false;
+                            }
+                        });
+                    }
+                    
+                    // Reset mixer function
+                    window.resetMixer = function() {
+                        // Stop all sounds
+                        for (let i = 0; i < soundObjects.length; i++) {
+                            if (soundObjects[i] && soundObjects[i].isLoaded()) {
+                                soundObjects[i].stop();
+                            }
+                        }
+                        
+                        // Reset play button
+                        const playButton = document.getElementById('play-button');
+                        playButton.textContent = "PLAY";
+                        isPlaying = false;
+                        
+                        // Reset slider thumbs to middle position
+                        const thumbs = document.querySelectorAll('.slider-thumb');
+                        thumbs.forEach((thumb, index) => {
+                            thumb.style.top = '10px'; // Middle position
+                            sliderValues[index] = 1.0;
+                            if (soundObjects[index] && soundObjects[index].isLoaded()) {
+                                soundObjects[index].setVolume(1.0);
+                            }
+                        });
+                    };
+                });
+            }
+            // Initialize Desktop Orb
+            function initDesktopOrb() {
+                new p5(function(p) {
+                    // Orb variables
+                    let orbSize = 240;
+                    let pixelSize = 3;
+                    let animationFrame = 0;
+                    let orbX, orbY;
+                    let dialogueBox;
+                    let currentText = "";
+                    let targetText = "";
+                    let textIndex = 0;
+                    let lastTypedTime = 0;
+                    let typingSpeed = 50;
+                    let answers = [
+                        "It is certain.",
+                        "Ask again later.",
+                        "Don't count on it.",
+                        "The stars say yes.",
+                        "Very doubtful.",
+                        "Without a doubt.",
+                        "Yes, definitely.",
+                        "Better not tell you now.",
+                        "My sources say no.",
+                        "Outlook good.",
+                        "Reply hazy, try again.",
+                        "Signs point to yes."
+                    ];
+                    
+                    p.setup = function() {
+                        // Create canvas inside the orb-canvas-container div
+                        let canvas = p.createCanvas(240, 238);
+                        canvas.parent('orb-canvas-container');
+                        
+                        // Calculate orb center position
+                        orbX = p.width / 2;
+                        orbY = p.height / 2;
+                        
+                        // Set up the dialogue box
+                        dialogueBox = document.getElementById('dialogue-box');
+                        
+                        // Set up the ask button
+                        document.getElementById('ask-button').addEventListener('click', askQuestion);
+                        document.getElementById('question-input').addEventListener('keypress', function(e) {
+                            if (e.key === 'Enter') {
+                                askQuestion();
+                            }
+                        });
+                        
+                        // Set initial dialogue
+                        setDialogue("Ask a question, yes or no, the Orb's wisdom soon will show...");
+                    };
+                    
+                    function askQuestion() {
+                        const questionInput = document.getElementById('question-input');
+                        const question = questionInput.value.trim();
+                        
+                        if (question) {
+                            // Clear input
+                            questionInput.value = '';
+                            
+                            // Set thinking text
+                            setDialogue("Hmm, let me think...");
+                            
+                            // Simulate thinking delay
+                            setTimeout(() => {
+                                // Choose random answer
+                                const randomAnswer = answers[Math.floor(Math.random() * answers.length)];
+                                setDialogue(randomAnswer);
+                            }, 1500);
+                        }
+                    }
+                    
+                    function setDialogue(text) {
+                        targetText = text;
+                        textIndex = 0;
+                        currentText = "";
+                        lastTypedTime = p.millis();
+                    }
+                    
+                    p.draw = function() {
+                        p.background(0); // Black background
+                        
+                        // Update animation frame
+                        animationFrame += 0.01; // Slow animation
+                        
+                        // Draw orb
+                        let radius = orbSize / 2;
+                        let centerI = Math.floor((orbSize / pixelSize) / 2);
+                        let centerJ = Math.floor((orbSize / pixelSize) / 2);
+                        
+                        // Draw outer edge (border)
+                        p.noFill();
+                        p.stroke(0);
+                        p.strokeWeight(2);
+                        p.ellipse(orbX, orbY, orbSize, orbSize);
+                        
+                        // Draw inner pattern
+                        p.noStroke();
+                        for (let i = 0; i < orbSize / pixelSize; i++) {
+                            for (let j = 0; j < orbSize / pixelSize; j++) {
+                                // Calculate distance from center
+                                let dx = (i - centerI);
+                                let dy = (j - centerJ);
+                                let distance = Math.sqrt(dx * dx + dy * dy);
+                                
+                                // Only draw if within the orb radius (with a small inner margin)
+                                if (distance < (radius / pixelSize) - 1) {
+                                    // Calculate pixel brightness based on noise and position
+                                    let noiseVal = p.noise(
+                                        i * 0.1, 
+                                        j * 0.1, 
+                                        animationFrame * 0.5
+                                    );
+                                    
+                                    // Map distance to brightness to create a glow effect
+                                    let brightness = noiseVal > 0.5 ? 255 : 0;
+                                    
+                                    // Draw the pixel
+                                    p.fill(brightness);
+                                    p.rect(
+                                        orbX - radius + i * pixelSize, 
+                                        orbY - radius + j * pixelSize, 
+                                        pixelSize, 
+                                        pixelSize
+                                    );
+                                }
+                            }
+                        }
+                        
+                        // Typing effect for dialogue
+                        if (textIndex < targetText.length && p.millis() > lastTypedTime + typingSpeed) {
+                            currentText += targetText.charAt(textIndex);
+                            textIndex++;
+                            lastTypedTime = p.millis();
+                            dialogueBox.textContent = currentText;
+                        }
+                    };
+                });
+                
+                // Reset function for orb
+                window.resetOrb = function() {
+                    const dialogueBox = document.getElementById('dialogue-box');
+                    dialogueBox.textContent = "Ask a question, yes or no, the Orb's wisdom soon will show...";
+                    document.getElementById('question-input').value = '';
+                };
+            }
+            // Initialize Desktop User Log
+            function initDesktopUserLog() {
+            // Only keep the first log entry
+            const logEntries = [
+                {
+                date: '2025-03-27',
+                topic: 'WELCOME',
+                message: 'You found us.'
+                }
+            ];
+            
+            const logBookContent = document.getElementById('log-book-content');
+            
+            // Create table with log entries
+            const table = document.createElement('table');
+            table.id = 'desktop-log-table';
+            table.style.width = '100%';
+            table.style.fontSize = '10px';
+            table.style.fontFamily = 'Courier New, monospace';
+            
+            // Table header
+            const headerRow = table.insertRow();
+            ['Date', 'Topic', 'Message'].forEach(headerText => {
+                const th = document.createElement('th');
+                th.textContent = headerText;
+                th.style.textAlign = 'left';
+                th.style.borderBottom = '1px solid black';
+                headerRow.appendChild(th);
+            });
+            
+            // Add the first log entry
+            addLogEntryToTable(table, logEntries[0]);
+            
+            // Clear previous content and add new table
+            logBookContent.innerHTML = '';
+            logBookContent.appendChild(table);
+            
+            // Adjust height based on content
+            adjustDesktopLogWindowHeight();
+            }
+            
+            // Setup Desktop Windows
+            function setupDesktopWindows() {
+                // Window Management
+                const windows = document.querySelectorAll('.window');
+                let topZIndex = 10;
+                
+                // Function to bring window to front
+                function bringToFront(window) {
+                    // Update z-index for all windows
+                    windows.forEach(w => {
+                        if (w !== window) {
+                            w.style.zIndex = 10;
+                        }
+                    });
+                    // Set the clicked window to the top
+                    window.style.zIndex = topZIndex + 1;
+                    topZIndex++;
+                }
+                
+                // Setup window drag functionality
+                function setupWindowDrag(windowId, titleBarId) {
+                    const windowElement = document.getElementById(windowId);
+                    const titleBar = document.getElementById(titleBarId);
+                    const desktopElement = document.querySelector('.desktop');
+                    let isDragging = false;
+                    let offsetX, offsetY;
+                
+                    titleBar.addEventListener("mousedown", (e) => {
+                        isDragging = true;
+                        // Precise offset calculation
+                        const windowRect = windowElement.getBoundingClientRect();
+                        offsetX = e.clientX - windowRect.left;
+                        offsetY = e.clientY - windowRect.top;
+                        bringToFront(windowElement);
+                        e.preventDefault(); // Prevent text selection during drag
+                    });
+                
+                    document.addEventListener("mousemove", (e) => {
+                        if (isDragging) {
+                            // Get desktop boundaries with precise calculations
+                            const desktopRect = desktopElement.getBoundingClientRect();
+                            const windowRect = windowElement.getBoundingClientRect();
+                            
+                            // Calculate new position based on mouse position and initial offset
+                            let newLeft = e.clientX - offsetX;
+                            let newTop = e.clientY - offsetY;
+                            
+                            // Precise boundary constraints
+                            // Left boundary
+                            newLeft = Math.max(desktopRect.left, Math.min(newLeft, desktopRect.right - windowRect.width));
+                            
+                            // Top boundary (accounting for menu bar)
+                            const menuBarHeight = 20; // Height of the menu bar
+                            newTop = Math.max(desktopRect.top + menuBarHeight, Math.min(newTop, desktopRect.bottom - windowRect.height));
+                            
+                            // Apply the constrained position relative to desktop
+                            windowElement.style.left = `${newLeft - desktopRect.left}px`;
+                            windowElement.style.top = `${newTop - desktopRect.top}px`;
+                        }
+                    });
+                
+                    document.addEventListener("mouseup", () => {
+                        isDragging = false;
+                    });
+                }
+                
+                // Set up window drag for all windows
+                setupWindowDrag("window1", "title-bar1");
+                setupWindowDrag("window2", "title-bar2");
+                setupWindowDrag("window3", "title-bar3");
+                
+                // Close box functionality for desktop windows
+                document.querySelectorAll('.window .close-box').forEach((closeBox, index) => {
+                    closeBox.addEventListener('click', () => {
+                        const windowElement = document.getElementById(`window${index + 1}`);
+                        windowElement.style.display = 'none';
+                        
+                        // Reset functionality if needed
+                        if (index === 0) { 
+                            resetMixer();
+                        }
+                        else if (index === 1) {
+                            resetOrb();
+                        }
+                    });
+                });
+                
+                // Double-click on desktop icons to open windows
+                document.querySelectorAll('.desktop-icon')[1].addEventListener('dblclick', () => {
+                    const window = document.getElementById('window1');
+                    window.style.display = 'flex';
+                    bringToFront(window);
+                });
+                
+                document.querySelectorAll('.desktop-icon')[2].addEventListener('dblclick', () => {
+                    const window = document.getElementById('window2');
+                    window.style.display = 'flex';
+                    bringToFront(window);
+                });
+                
+                document.querySelectorAll('.desktop-icon')[0].addEventListener('dblclick', () => {
+                    const window = document.getElementById('window3');
+                    window.style.display = 'flex';
+                    bringToFront(window);
+                });
+                
+                // Mixer dropdown menu
+                const menuItems = document.querySelectorAll('.mac-menu-dropdown li:not(.disabled)');
+                const currentTrackElement = document.getElementById('current-track');
+            
+                menuItems.forEach(item => {
+                    item.addEventListener('click', function() {
+                        // Remove selected class from all items
+                        menuItems.forEach(el => el.classList.remove('selected'));
+                        
+                        // Add selected class to clicked item
+                        this.classList.add('selected');
+                        
+                        // Update current track display
+                        const trackName = this.getAttribute('data-track');
+                        currentTrackElement.textContent = trackName;
+                    });
+                });
+            }
+            // ---- MOBILE VERSION FUNCTIONS ----
+            function initMobileLogo() {
+                new p5(function(p) {
+                    p.setup = function() {
+                        let iconCanvas = p.createCanvas(18, 15);
+                        iconCanvas.parent('mobile-logo-icon');
+                        p.background(220);
+                        p.strokeWeight(2);
+                        p.translate(-6,-6);
+                        p.rect(6,6, 18, 15);
+                        p.strokeWeight(3);
+                        p.line(9,9,9,18);
+                        p.line(13,9,13,18);
+                        p.line(13,18,21,18);
+                        p.line(17, 9, 17, 14);
+                        p.line(17,14, 21, 14);
+                        p.line(21,14, 21, 9);
+                    }
+                });
+            }
+            
+            // Replace the current initMobileAudioMixer function with this improved version
+            function initMobileAudioMixer() {
+                // Create a new p5 instance for mobile audio handling
+                new p5(function(p) {
+                    // Audio file paths - make sure these files exist in your assets folder
+                    const sounds = [
+                        'assets/DRUMS.mp3',
+                        'assets/BASS.mp3',
+                        'assets/GTRS.mp3',
+                        'assets/KEYS.mp3',
+                        'assets/VOX.mp3',
+                        'assets/BVOX.mp3'
+                    ];
+                    
+                    const names = ['DRUMS', 'BASS', 'GTRS', 'KEYS', 'VOX', 'BVOX'];
+                    const soundObjects = [];
+                    const sliderValues = Array(sounds.length).fill(1.0);
+                    let isPlaying = false;
+                    let filesLoaded = 0;
+                    let loadingFailed = false;
+                    
+                    p.preload = function() {
+                        // This ensures the audio context is created
+                        p.getAudioContext();
+                        
+                        // Load sounds
+                        for (let i = 0; i < sounds.length; i++) {
+                            try {
+                                const sound = p.loadSound(sounds[i], 
+                                    // Success callback
+                                    function() {
+                                        filesLoaded++;
+                                        updateLoadingStatus();
+                                    },
+                                    // Error callback
+                                    function(err) {
+                                        console.error("Failed to load sound:", err);
+                                        loadingFailed = true;
+                                        updateLoadingStatus();
+                                    }
+                                );
+                                soundObjects.push(sound);
+                            } catch (e) {
+                                console.error("Error loading sound:", e);
+                                loadingFailed = true;
+                                soundObjects.push(null); // Push null to maintain array length
+                                updateLoadingStatus();
+                            }
+                        }
+                    };
+                    
+                    p.setup = function() {
+                        // Create a small canvas just for p5.js to work with
+                        let canvas = p.createCanvas(1, 1);
+                        canvas.parent('mobile-volume-sliders');
+                        canvas.style('display', 'none');
+                        
+                        // Create custom sliders
+                        createCustomSliders();
+                        
+                        // Set up play button
+                        setupPlayButton();
+                        
+                        // Set initial volume for all sounds
+                        for (let i = 0; i < soundObjects.length; i++) {
+                            if (soundObjects[i] && soundObjects[i].isLoaded()) {
+                                soundObjects[i].setVolume(sliderValues[i]);
+                            }
+                        }
+                    };
+                    
+                    function updateLoadingStatus() {
+                        const loadingStatus = document.getElementById('mobile-loading-status');
+                        if (loadingFailed) {
+                            loadingStatus.textContent = "Failed to load some audio files. Check console for details.";
+                            loadingStatus.style.color = "red";
+                        } else if (filesLoaded === sounds.length) {
+                            loadingStatus.textContent = "All audio files loaded successfully!";
+                            setTimeout(() => {
+                                loadingStatus.style.display = "none";
+                            }, 2000);
+                        } else {
+                            loadingStatus.textContent = `Loading audio files... (${filesLoaded}/${sounds.length})`;
+                        }
+                    }
+                    
+                    function createCustomSliders() {
+                        const sliderContainer = document.getElementById('mobile-volume-sliders');
+                        
+                        // Clear existing sliders
+                        sliderContainer.innerHTML = '';
+                        
+                        for (let i = 0; i < names.length; i++) {
+                            const sliderDiv = document.createElement('div');
+                            sliderDiv.className = 'mobile-slider-container';
+                            
+                            const label = document.createElement('div');
+                            label.className = 'mobile-slider-label';
+                            label.textContent = names[i];
+                            
+                            const slider = document.createElement('div');
+                            slider.className = 'horizontal-slider';
+                            
+                            const track = document.createElement('div');
+                            track.className = 'horizontal-track';
+                            
+                            const thumb = document.createElement('div');
+                            thumb.className = 'horizontal-thumb';
+                            // Position thumb in the middle (50% = 0.5 volume)
+                            thumb.style.left = '100%';
+                            thumb.dataset.index = i;
+                            
+                            slider.appendChild(track);
+                            slider.appendChild(thumb);
+                            sliderDiv.appendChild(label);
+                            sliderDiv.appendChild(slider);
+                            sliderContainer.appendChild(sliderDiv);
+                            
+                            // Set up event handling for this slider
+                            setupSliderEvents(slider, thumb, i);
+                        }
+                    }
+                    
+                    function setupSliderEvents(slider, thumb, index) {
+                        let isDragging = false;
+                        
+                        // Touch events for mobile
+                        thumb.addEventListener('touchstart', function(e) {
+                            isDragging = true;
+                            e.preventDefault();
+                        }, { passive: false });
+                        
+                        slider.addEventListener('touchmove', function(e) {
+                            if (!isDragging) return;
+                            
+                            const touch = e.touches[0];
+                            const sliderRect = slider.getBoundingClientRect();
+                            
+                            // Calculate position within the slider
+                            let posX = touch.clientX - sliderRect.left;
+                            
+                            // Constrain position within slider bounds
+                            posX = Math.max(0, Math.min(posX, sliderRect.width));
+                            
+                            // Calculate value (0-1) based on position
+                            const value = posX / sliderRect.width;
+                            
+                            // Position thumb (use percentage for better responsiveness)
+                            const percent = (posX / sliderRect.width) * 100;
+                            thumb.style.left = `${percent}%`;
+                            
+                            // Update volume
+                            sliderValues[index] = value;
+                            if (soundObjects[index] && soundObjects[index].isLoaded()) {
+                                soundObjects[index].setVolume(value);
+                            }
+                            
+                            e.preventDefault(); // Prevent scrolling while dragging
+                        }, { passive: false });
+                        
+                        // Mouse events for desktop viewing of mobile version
+                        thumb.addEventListener('mousedown', function(e) {
+                            isDragging = true;
+                            e.preventDefault();
+                        });
+                        
+                        slider.addEventListener('mousemove', function(e) {
+                            if (!isDragging) return;
+                            
+                            const sliderRect = slider.getBoundingClientRect();
+                            
+                            // Calculate position within the slider
+                            let posX = e.clientX - sliderRect.left;
+                            
+                            // Constrain position within slider bounds
+                            posX = Math.max(0, Math.min(posX, sliderRect.width));
+                            
+                            // Calculate value (0-1) based on position
+                            const value = posX / sliderRect.width;
+                            
+                            // Position thumb (use percentage for better responsiveness)
+                            const percent = (posX / sliderRect.width) * 100;
+                            thumb.style.left = `${percent}%`;
+                            
+                            // Update volume
+                            sliderValues[index] = value;
+                            if (soundObjects[index] && soundObjects[index].isLoaded()) {
+                                soundObjects[index].setVolume(value);
+                            }
+                        });
+                        
+                        // Click on track to set position
+                        slider.addEventListener('click', function(e) {
+                            const sliderRect = slider.getBoundingClientRect();
+                            
+                            // Calculate position within the slider
+                            let posX = e.clientX - sliderRect.left;
+                            
+                            // Constrain position within slider bounds
+                            posX = Math.max(0, Math.min(posX, sliderRect.width));
+                            
+                            // Calculate value (0-1) based on position
+                            const value = posX / sliderRect.width;
+                            
+                            // Position thumb (use percentage for better responsiveness)
+                            const percent = (posX / sliderRect.width) * 100;
+                            thumb.style.left = `${percent}%`;
+                            
+                            // Update volume
+                            sliderValues[index] = value;
+                            if (soundObjects[index] && soundObjects[index].isLoaded()) {
+                                soundObjects[index].setVolume(value);
+                            }
+                        });
+                        
+                        // End dragging on touch/mouse release
+                        document.addEventListener('touchend', function() {
+                            isDragging = false;
+                        });
+                        
+                        document.addEventListener('mouseup', function() {
+                            isDragging = false;
+                        });
+                    }
+                    
+                    function setupPlayButton() {
+                        const playButton = document.getElementById('mobile-play-button');
+                        
+                        playButton.addEventListener('click', () => {
+                            if (filesLoaded !== sounds.length) {
+                                alert("Please wait for all audio files to load.");
+                                return;
+                            }
+                            
+                            if (!isPlaying) {
+                                // Start playing all sounds
+                                for (let i = 0; i < soundObjects.length; i++) {
+                                    if (soundObjects[i] && soundObjects[i].isLoaded()) {
+                                        soundObjects[i].setVolume(sliderValues[i]);
+                                        
+                                        // If paused, resume from current position
+                                        if (soundObjects[i].isPaused()) {
+                                            soundObjects[i].play();
+                                        } else {
+                                            // Otherwise start looping
+                                            soundObjects[i].loop();
+                                        }
+                                    }
+                                }
+                                playButton.textContent = "STOP";
+                                isPlaying = true;
+                            } else {
+                                // Pause all sounds
+                                for (let i = 0; i < soundObjects.length; i++) {
+                                    if (soundObjects[i] && soundObjects[i].isPlaying()) {
+                                        soundObjects[i].pause();
+                                    }
+                                }
+                                playButton.textContent = "PLAY";
+                                isPlaying = false;
+                            }
+                        });
+                    }
+                    
+                    // Reset mixer function for mobile
+                    window.resetMobileMixer = function() {
+                        // Stop all sounds
+                        for (let i = 0; i < soundObjects.length; i++) {
+                            if (soundObjects[i] && soundObjects[i].isLoaded()) {
+                                soundObjects[i].stop();
+                            }
+                        }
+                        
+                        // Reset play button
+                        const playButton = document.getElementById('mobile-play-button');
+                        playButton.textContent = "PLAY";
+                        isPlaying = false;
+                        
+                        // Reset slider thumbs to middle position
+                        const thumbs = document.querySelectorAll('.horizontal-thumb');
+                        thumbs.forEach((thumb, index) => {
+                            thumb.style.left = '100%';
+                            sliderValues[index] = 1.0;
+                            if (soundObjects[index] && soundObjects[index].isLoaded()) {
+                                soundObjects[index].setVolume(1.0);
+                            }
+                        });
+                    };
+                });
+            }
+
+            function initMobileSongMenu() {
+            // Use the same tracks as in the desktop version
+            const tracks = [
+                { value: "Track 1: Default Mix", enabled: true },
+                { value: "Track 2: Coming Soon", enabled: false },
+                { value: "Track 3: Coming Soon", enabled: false },
+                { value: "Track 4: Coming Soon", enabled: false },
+                { value: "Track 5: Coming Soon", enabled: false }
+            ];
+            
+            // Hide the original track selector since we're replacing it
+            const originalTrackSelector = document.querySelector('.track-selector');
+            if (originalTrackSelector) {
+                originalTrackSelector.style.display = 'none';
+            }
+                
+            // Create the mobile song menu container
+            const songMenuContainer = document.createElement('div');
+            songMenuContainer.className = 'mobile-song-menu';
+            
+            // Create the button that opens the menu
+            const songButton = document.createElement('div');
+            songButton.className = 'mobile-song-button';
+            songButton.innerHTML = '<span>Track 1: Default Mix</span><span class="arrow">▼</span>';
+            
+            // Create the dropdown container
+            const songDropdown = document.createElement('div');
+            songDropdown.className = 'mobile-song-dropdown';
+            
+            // Add tracks to the dropdown
+            tracks.forEach(track => {
+                const trackItem = document.createElement('div');
+                trackItem.className = track.enabled ? 'song-item' : 'song-item disabled';
+                trackItem.innerHTML = `<div class="title">${track.value}</div>`;
+                
+                // Add styling for disabled items
+                if (!track.enabled) {
+                trackItem.style.color = '#888';
+                trackItem.style.cursor = 'not-allowed';
+                }
+                
+                // Add click handler to select track (only for enabled tracks)
+                if (track.enabled) {
+                trackItem.addEventListener('click', () => {
+                    // Update the track selector to match
+                    const trackSelector = document.getElementById('mobile-track-selector');
+                    if (trackSelector) {
+                    trackSelector.value = track.value;
+                    
+                    // Trigger a change event on the selector
+                    const event = new Event('change');
+                    trackSelector.dispatchEvent(event);
+                    }
+                    
+                    // Update the button text to show the selected track
+                    songButton.querySelector('span:first-child').textContent = track.value;
+                    
+                    // Close the dropdown after selection
+                    songDropdown.classList.remove('open');
+                    songButton.querySelector('.arrow').style.transform = 'rotate(0deg)';
+                });
+                }
+                
+                songDropdown.appendChild(trackItem);
+            });
+            
+            // Add elements to the container
+            songMenuContainer.appendChild(songButton);
+            songMenuContainer.appendChild(songDropdown);
+            
+            // Add click handler to toggle dropdown
+            songButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isOpen = songDropdown.classList.toggle('open');
+                
+                // Rotate arrow when open/closed
+                if (isOpen) {
+                songButton.querySelector('.arrow').style.transform = 'rotate(180deg)';
+                } else {
+                songButton.querySelector('.arrow').style.transform = 'rotate(0deg)';
+                }
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!songMenuContainer.contains(e.target)) {
+                songDropdown.classList.remove('open');
+                songButton.querySelector('.arrow').style.transform = 'rotate(0deg)';
+                }
+            });
+            
+            // Insert immediately after the title bar, before any other content
+            const mobileWindow = document.getElementById('mobile-window1');
+            const mobileContent = document.getElementById('mobile-content1');
+            
+            // Insert before the existing content div
+            mobileWindow.insertBefore(songMenuContainer, mobileContent);
+            }
+
+            function fixMobileSongMenuOverflow() {
+            // Get references to the elements
+            const dropdown = document.querySelector('.mobile-song-dropdown');
+            const menuButton = document.querySelector('.mobile-song-button');
+            const window = document.getElementById('mobile-window1');
+            
+            if (dropdown && window) {
+                // Get the width of the parent window
+                const windowWidth = window.offsetWidth;
+                
+                // Apply correct positioning and size
+                dropdown.style.width = '100%';
+                dropdown.style.maxWidth = '100%';
+                
+                // Set the dropdown z-index high enough to appear above the scrollbar
+                dropdown.style.zIndex = '1020';
+                
+                // Make sure the menu button click handler accounts for dropdown positioning
+                if (menuButton) {
+                // Remove existing click listener to avoid duplicates
+                const newMenuButton = menuButton.cloneNode(true);
+                menuButton.parentNode.replaceChild(newMenuButton, menuButton);
+                
+                // Add new click handler
+                newMenuButton.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const isOpen = dropdown.classList.toggle('open');
+                    
+                    if (isOpen) {
+                    // When opening, make sure the dropdown is positioned correctly
+                    dropdown.style.top = '100%';
+                    dropdown.style.left = '0';
+                    
+                    // Rotate arrow
+                    newMenuButton.querySelector('.arrow').style.transform = 'rotate(180deg)';
+                    } else {
+                    // Reset arrow when closing
+                    newMenuButton.querySelector('.arrow').style.transform = 'rotate(0deg)';
+                    }
+                });
+                }
+                
+                // Close dropdown when clicking outside
+                document.addEventListener('click', (e) => {
+                if (dropdown.classList.contains('open') && !dropdown.contains(e.target) && !menuButton.contains(e.target)) {
+                    dropdown.classList.remove('open');
+                    menuButton.querySelector('.arrow').style.transform = 'rotate(0deg)';
+                }
+                });
+            }
+            }
+
+            // Initialize Mobile Orb
+            function initMobileOrb() {
+                new p5(function(p) {
+                    // Orb variables
+                    let orbSize = 200;
+                    let pixelSize = 4;
+                    let animationFrame = 0;
+                    let orbX, orbY;
+                    let dialogueBox;
+                    let currentText = "";
+                    let targetText = "";
+                    let textIndex = 0;
+                    let lastTypedTime = 0;
+                    let typingSpeed = 50;
+                    let answers = [
+                        "It is certain.",
+                        "Ask again later.",
+                        "Don't count on it.",
+                        "The stars say yes.",
+                        "Very doubtful.",
+                        "Without a doubt.",
+                        "Yes, definitely.",
+                        "Better not tell you now.",
+                        "My sources say no.",
+                        "Outlook good.",
+                        "Reply hazy, try again.",
+                        "Signs point to yes."
+                    ];
+                    
+                    p.setup = function() {
+                        let canvas = p.createCanvas(200, 200);
+                        canvas.parent('mobile-orb-canvas-container');
+                        
+                        orbX = p.width / 2;
+                        orbY = p.height / 2;
+                        
+                        dialogueBox = document.getElementById('mobile-dialogue-box');
+                        
+                        document.getElementById('mobile-ask-button').addEventListener('click', askQuestion);
+                        document.getElementById('mobile-question-input').addEventListener('keypress', function(e) {
+                            if (e.key === 'Enter') {
+                                askQuestion();
+                            }
+                        });
+                        
+                        setDialogue("Ask a question, yes or no, the Orb's wisdom soon will show...");
+                    };
+                    
+                    function askQuestion() {
+                        const questionInput = document.getElementById('mobile-question-input');
+                        const question = questionInput.value.trim();
+                        
+                        if (question) {
+                            questionInput.value = '';
+                            setDialogue("Hmm, let me think...");
+                            
+                            setTimeout(() => {
+                                const randomAnswer = answers[Math.floor(Math.random() * answers.length)];
+                                setDialogue(randomAnswer);
+                            }, 1500);
+                        }
+                    }
+                    
+                    function setDialogue(text) {
+                        targetText = text;
+                        textIndex = 0;
+                        currentText = "";
+                        lastTypedTime = p.millis();
+                    }
+                    
+                    p.draw = function() {
+                        p.background(0);
+                        
+                        animationFrame += 0.01;
+                        
+                        let radius = orbSize / 2;
+                        let centerI = Math.floor((orbSize / pixelSize) / 2);
+                        let centerJ = Math.floor((orbSize / pixelSize) / 2);
+                        
+                        p.noFill();
+                        p.stroke(0);
+                        p.strokeWeight(2);
+                        p.ellipse(orbX, orbY, orbSize, orbSize);
+                        
+                        p.noStroke();
+                        for (let i = 0; i < orbSize / pixelSize; i++) {
+                            for (let j = 0; j < orbSize / pixelSize; j++) {
+                                let dx = (i - centerI);
+                                let dy = (j - centerJ);
+                                let distance = Math.sqrt(dx * dx + dy * dy);
+                                
+                                if (distance < (radius / pixelSize) - 1) {
+                                    let noiseVal = p.noise(
+                                        i * 0.1, 
+                                        j * 0.1, 
+                                        animationFrame * 0.5
+                                    );
+                                    
+                                    let brightness = noiseVal > 0.5 ? 255 : 0;
+                                    
+                                    p.fill(brightness);
+                                    p.rect(
+                                        orbX - radius + i * pixelSize, 
+                                        orbY - radius + j * pixelSize, 
+                                        pixelSize, 
+                                        pixelSize
+                                    );
+                                }
+                            }
+                        }
+                        
+                        if (textIndex < targetText.length && p.millis() > lastTypedTime + typingSpeed) {
+                            currentText += targetText.charAt(textIndex);
+                            textIndex++;
+                            lastTypedTime = p.millis();
+                            dialogueBox.textContent = currentText;
+                        }
+                    };
+                });
+                
+                // Reset function for mobile orb
+                window.resetMobileOrb = function() {
+                    const dialogueBox = document.getElementById('mobile-dialogue-box');
+                    dialogueBox.textContent = "Ask a question, yes or no, the Orb's wisdom soon will show...";
+                    document.getElementById('mobile-question-input').value = '';
+                };
+            }
+            // Initialize Mobile User Log
+            function initMobileUserLog() {
+            // Only keep the first log entry
+            const logEntries = [
+                {
+                date: '2025-03-27',
+                topic: 'WELCOME',
+                message: 'You found us.'
+                }
+            ];
+            
+            const logBookContent = document.getElementById('mobile-log-book-content');
+            
+            // Create table with log entries
+            const table = document.createElement('table');
+            table.id = 'mobile-log-table';
+            table.className = 'mobile-log-table';
+            
+            // Table header
+            const headerRow = table.insertRow();
+            ['Date', 'Topic', 'Message'].forEach(headerText => {
+                const th = document.createElement('th');
+                th.textContent = headerText;
+                headerRow.appendChild(th);
+            });
+            
+            // Add the first log entry
+            addLogEntryToTable(table, logEntries[0]);
+            
+            // Clear previous content and add new table
+            logBookContent.innerHTML = '';
+            logBookContent.appendChild(table);
+            }
+
+            function fixMobileWindowCollapse() {
+            // Get all close buttons
+            const closeBoxes = document.querySelectorAll('.mobile-close-box');
+            
+            // Remove any existing event listeners to avoid duplicates
+            closeBoxes.forEach((closeBox, index) => {
+                const oldClone = closeBox.cloneNode(true);
+                closeBox.parentNode.replaceChild(oldClone, closeBox);
+                
+                // Add new event listener
+                oldClone.addEventListener('click', () => {
+                const contentDiv = document.getElementById(`mobile-content${index + 1}`);
+                contentDiv.classList.toggle('mobile-collapsed');
+                
+                // If collapsed, reset functionality if needed
+                if (contentDiv.classList.contains('mobile-collapsed')) {
+                    if (index === 0) { 
+                    window.resetMobileMixer && window.resetMobileMixer();
+                    }
+                    else if (index === 1) {
+                    window.resetMobileOrb && window.resetMobileOrb();
+                    }
+                }
+                });
+            });
+            }
+
+            
+            // Setup Mobile Windows
+            function setupMobileWindows() {
+                // Set up collapsible content for mobile windows
+                document.querySelectorAll('.mobile-close-box').forEach((closeBox, index) => {
+                    closeBox.addEventListener('click', () => {
+                        const contentDiv = document.getElementById(`mobile-content${index + 1}`);
+                        contentDiv.classList.toggle('mobile-collapsed');
+                        
+                        // Reset functionality if needed
+                        if (contentDiv.classList.contains('mobile-collapsed')) {
+                            if (index === 0) { 
+                                // Use the new reset function
+                                window.resetMobileMixer();
+                            }
+                            else if (index === 1) {
+                                resetMobileOrb();
+                            }
+                        }
+                    });
+                });
+            }
+            
+            setupMobileWindows();
+            fixMobileWindowCollapse();
+
+            // Setup custom scrollbar functionality
+            function setupCustomScrollbar() {
+                const contentArea = document.getElementById('mobile-content-area');
+                const scrollThumb = document.getElementById('mobile-scroll-thumb');
+                const scrollUp = document.getElementById('mobile-scroll-up');
+                const scrollDown = document.getElementById('mobile-scroll-down');
+                const scrollTrack = document.querySelector('.mobile-scroll-track');
+                
+                // Update thumb position based on scroll
+                function updateThumbPosition() {
+                    const scrollPercentage = contentArea.scrollTop / (contentArea.scrollHeight - contentArea.clientHeight);
+                    const trackHeight = scrollTrack.clientHeight;
+                    const thumbHeight = scrollThumb.clientHeight;
+                    const maxThumbTop = trackHeight - thumbHeight;
+                    const thumbTop = scrollPercentage * maxThumbTop;
+                    scrollThumb.style.top = `${thumbTop}px`;
+                }
+                
+                // Initial position
+                updateThumbPosition();
+                
+                // Add event listeners
+                contentArea.addEventListener('scroll', updateThumbPosition);
+                
+                // Scroll up button
+                scrollUp.addEventListener('click', () => {
+                    contentArea.scrollBy({
+                        top: -100,
+                        behavior: 'smooth'
+                    });
+                });
+                
+                // Scroll down button
+                scrollDown.addEventListener('click', () => {
+                    contentArea.scrollBy({
+                        top: 100,
+                        behavior: 'smooth'
+                    });
+                });
+                
+                // Thumb drag functionality
+                let isDragging = false;
+                let startY, startTop;
+                
+                scrollThumb.addEventListener('mousedown', (e) => {
+                    isDragging = true;
+                    startY = e.clientY;
+                    startTop = parseInt(scrollThumb.style.top) || 0;
+                    e.preventDefault();
+                });
+                
+                scrollThumb.addEventListener('touchstart', (e) => {
+                    isDragging = true;
+                    startY = e.touches[0].clientY;
+                    startTop = parseInt(scrollThumb.style.top) || 0;
+                    e.preventDefault();
+                });
+                
+                document.addEventListener('mousemove', (e) => {
+                    if (!isDragging) return;
+                    
+                    const trackHeight = scrollTrack.clientHeight;
+                    const thumbHeight = scrollThumb.clientHeight;
+                    const maxThumbTop = trackHeight - thumbHeight;
+                    
+                    const deltaY = e.clientY - startY;
+                    let newTop = startTop + deltaY;
+                    newTop = Math.max(0, Math.min(newTop, maxThumbTop));
+                    
+                    scrollThumb.style.top = `${newTop}px`;
+                    
+                    const scrollPercentage = newTop / maxThumbTop;
+                    contentArea.scrollTop = scrollPercentage * (contentArea.scrollHeight - contentArea.clientHeight);
+                });
+                
+                document.addEventListener('touchmove', (e) => {
+                    if (!isDragging) return;
+                    
+                    const trackHeight = scrollTrack.clientHeight;
+                    const thumbHeight = scrollThumb.clientHeight;
+                    const maxThumbTop = trackHeight - thumbHeight;
+                    
+                    const deltaY = e.touches[0].clientY - startY;
+                    let newTop = startTop + deltaY;
+                    newTop = Math.max(0, Math.min(newTop, maxThumbTop));
+                    
+                    scrollThumb.style.top = `${newTop}px`;
+                    
+                    const scrollPercentage = newTop / maxThumbTop;
+                    contentArea.scrollTop = scrollPercentage * (contentArea.scrollHeight - contentArea.clientHeight);
+                    
+                    e.preventDefault();
+                }, { passive: false });
+                
+                document.addEventListener('mouseup', () => {
+                    isDragging = false;
+                });
+                
+                document.addEventListener('touchend', () => {
+                    isDragging = false;
+                });
+            }
+            // Helper function to add a log entry to a table
+            function addLogEntryToTable(table, entry) {
+            const row = table.insertRow();
+            
+            // Date cell
+            const dateCell = row.insertCell();
+            dateCell.textContent = entry.date;
+            
+            // Topic cell
+            const topicCell = row.insertCell();
+            topicCell.textContent = entry.topic;
+            topicCell.style.fontWeight = 'bold';
+            
+            // Message cell
+            const messageCell = row.insertCell();
+            messageCell.textContent = entry.message;
+            
+            // Style rows
+            row.style.borderBottom = '1px solid #eee';
+            }
+
+            // Function to adjust the height of the desktop log window based on content
+            function adjustDesktopLogWindowHeight() {
+            const logWindow = document.getElementById('window3');
+            const logContent = document.getElementById('log-book-content');
+            
+            if (logWindow && logContent) {
+                // Get content height plus some padding
+                const contentHeight = logContent.scrollHeight + 40;
+                // Set a minimum height
+                const minHeight = 120;
+                // Set a maximum height to prevent too large windows
+                const maxHeight = 400;
+                
+                // Apply the new height, bounded by min and max
+                const newHeight = Math.max(minHeight, Math.min(contentHeight, maxHeight));
+                logWindow.style.height = newHeight + 'px';
+            }
+            }
+
+            // Function to add a new log entry (can be called when site updates occur)
+            function addNewLogEntry(date, topic, message, isMobile = false) {
+            // Create the new entry object
+            const newEntry = { date, topic, message };
+            
+            // Get the appropriate table
+            const tableId = isMobile ? 'mobile-log-table' : 'desktop-log-table';
+            const table = document.getElementById(tableId);
+            
+            if (table) {
+                // Add the new entry to the table
+                addLogEntryToTable(table, newEntry);
+                
+                // If desktop, adjust window height
+                if (!isMobile) {
+                adjustDesktopLogWindowHeight();
+                }
+            }
+            }
+
+            // Example usage (you can call this when you have updates to log):
+            // addNewLogEntry('2025-04-01', 'UPDATE', 'Added new song menu to mobile version.', false);  // For desktop
+            // addNewLogEntry('2025-04-01', 'UPDATE', 'Added new song menu to mobile version.', true);   // For mobile
+        });
+    </script>
+</body>
+</html>
