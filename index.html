@@ -933,10 +933,10 @@
             </div>
             <div class="mac-menu-bar">
                 <div class="mac-menu">
-                    <div class="mac-menu-title" id="current-track">Track 1: Default Mix</div>
+                    <div class="mac-menu-title" id="current-track">Track 1: MADRE</div>
                     <div class="mac-menu-dropdown">
                         <ul>
-                            <li data-track="Track 1: Default Mix" class="selected">Track 1: Default Mix</li>
+                            <li data-track="Track 1: Default Mix" class="selected">Track 1: MADRE</li>
                             <li data-track="Track 2: Coming Soon" class="disabled">Track 2: Coming Soon</li>
                             <li data-track="Track 3: Coming Soon" class="disabled">Track 3: Coming Soon</li>
                             <li data-track="Track 4: Coming Soon" class="disabled">Track 4: Coming Soon</li>
@@ -1217,10 +1217,11 @@
                         'assets/GTRS.mp3',
                         'assets/KEYS.mp3',
                         'assets/VOX.mp3',
-                        'assets/BVOX.mp3'
+                        'assets/BVOX.mp3',
+                        'assets/ORCH.mp3'
                     ];
                     
-                    const names = ['DRUMS','BASS', 'GTRS', 'KEYS', 'VOX', 'BVOX'];
+                    const names = ['DRUMS','BASS', 'GTRS', 'KEYS', 'VOX', 'BVOX', 'ORCH'];
                     const soundObjects = [];
                     const sliderValues = Array(sounds.length).fill(1.0);
                     let isPlaying = false;
@@ -1601,7 +1602,7 @@
             // Only keep the first log entry
             const logEntries = [
                 {
-                date: '2025-03-27',
+                date: '2025-07-31',
                 topic: 'WELCOME',
                 message: 'You found us.'
                 }
@@ -1793,10 +1794,11 @@
                         'assets/GTRS.mp3',
                         'assets/KEYS.mp3',
                         'assets/VOX.mp3',
-                        'assets/BVOX.mp3'
+                        'assets/BVOX.mp3',
+                        'assets/ORCH.mp3'
                     ];
                     
-                    const names = ['DRUMS', 'BASS', 'GTRS', 'KEYS', 'VOX', 'BVOX'];
+                    const names = ['DRUMS', 'BASS', 'GTRS', 'KEYS', 'VOX', 'BVOX', 'ORCH'];
                     const soundObjects = [];
                     const sliderValues = Array(sounds.length).fill(1.0);
                     let isPlaying = false;
@@ -2076,7 +2078,7 @@
             function initMobileSongMenu() {
             // Use the same tracks as in the desktop version
             const tracks = [
-                { value: "Track 1: Default Mix", enabled: true },
+                { value: "Track 1: MADRE", enabled: true },
                 { value: "Track 2: Coming Soon", enabled: false },
                 { value: "Track 3: Coming Soon", enabled: false },
                 { value: "Track 4: Coming Soon", enabled: false },
@@ -2096,7 +2098,7 @@
             // Create the button that opens the menu
             const songButton = document.createElement('div');
             songButton.className = 'mobile-song-button';
-            songButton.innerHTML = '<span>Track 1: Default Mix</span><span class="arrow">▼</span>';
+            songButton.innerHTML = '<span>Track 1: MADRE</span><span class="arrow">▼</span>';
             
             // Create the dropdown container
             const songDropdown = document.createElement('div');
@@ -2356,7 +2358,7 @@
             // Only keep the first log entry
             const logEntries = [
                 {
-                date: '2025-03-27',
+                date: '2025-07-31',
                 topic: 'WELCOME',
                 message: 'You found us.'
                 }
