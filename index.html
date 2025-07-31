@@ -1144,7 +1144,10 @@
                         <!-- Mobile sliders will be generated here -->
                     </div>
                     <button class="mobile-btn" id="mobile-play-button">PLAY</button>
-                    <div class="loading-indicator" id="mobile-loading-status">Loading audio files...</div>
+                    <div class="loading-indicator" id="mobile-loading-status">Loading audio files...
+                        <br> 
+                        <div style="color: red; font-size: 9px; margin-top: 3px;">Take mobile device OFF SILENT</div>
+                    </div>
                 </div>
             </div>
             
@@ -2108,15 +2111,21 @@
                     function updateLoadingStatus() {
                         const loadingStatus = document.getElementById('mobile-loading-status');
                         if (loadingFailed) {
-                            loadingStatus.textContent = "Failed to load some audio files. Check console for details.";
-                            loadingStatus.style.color = "red";
+                            loadingStatus.innerHTML = `
+                                <div style="color: red;">Failed to load some audio files. Check console for details.</div>
+                            `;
                         } else if (filesLoaded === sounds.length) {
-                            loadingStatus.textContent = "All audio files loaded successfully!";
+                            loadingStatus.innerHTML = `
+                                <div style="color: green;">All audio files loaded successfully!</div>
+                            `;
                             setTimeout(() => {
                                 loadingStatus.style.display = "none";
                             }, 2000);
                         } else {
-                            loadingStatus.textContent = `Loading audio files... (${filesLoaded}/${sounds.length})`;
+                            loadingStatus.innerHTML = `
+                                <div>Loading audio files... (${filesLoaded}/${sounds.length})</div>
+                                <div style="color: red; font-size: 9px; margin-top: 3px;">Take mobile device OFF SILENT</div>
+                            `;
                         }
                     }
                     
