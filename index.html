@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="robots" content="noindex, nofollow">
-    <title>IW</title>
+
+    <title>Classic Macintosh Interface</title>
     <style>
         @import url('https://fonts.cdnfonts.com/css/chicago-2');
         
@@ -898,11 +898,150 @@
                 display: block;
             }
         }
+        /* Password Overlay Styles */
+.password-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #222;
+    background-image: radial-gradient(#000 1px, transparent 0);
+    background-size: 4px 4px;
+    z-index: 10000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.password-window {
+    width: 320px;
+    background-color: #fff;
+    border: 2px solid #000;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 3px 3px 0 rgba(0,0,0,0.4);
+    font-family: 'Chicago', 'Courier New', monospace;
+}
+
+.password-title-bar {
+    background-color: #fff;
+    border-bottom: 2px solid #000;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.password-title-bar:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    background: repeating-linear-gradient(
+        to right,
+        #000,
+        #000 2px,
+        transparent 2px,
+        transparent 4px
+    );
+}
+
+.password-title {
+    font-size: 12px;
+    text-align: center;
+    margin-top: 2px;
+}
+
+.password-content {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.password-message {
+    font-size: 12px;
+    text-align: center;
+    font-family: 'Courier New', monospace;
+}
+
+.password-input {
+    width: 200px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    border: 2px solid #000;
+    padding: 5px;
+    text-align: center;
+}
+
+.password-input:focus {
+    outline: none;
+    background-color: #f0f0f0;
+}
+
+.password-btn {
+    font-family: 'Chicago', 'Courier New', monospace;
+    background-color: #fff;
+    color: #000;
+    border: 2px solid #000;
+    border-radius: 3px;
+    padding: 5px 15px;
+    cursor: pointer;
+    font-size: 12px;
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+}
+
+.password-btn:active {
+    box-shadow: none;
+    transform: translate(1px, 1px);
+}
+
+.password-error {
+    font-size: 10px;
+    color: red;
+    text-align: center;
+    font-family: 'Courier New', monospace;
+}
+
+/* Mobile Password Styles */
+@media (max-width: 800px) {
+    .password-window {
+        width: 90%;
+        max-width: 300px;
+    }
+    
+    .password-input {
+        width: 180px;
+    }
+}
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/addons/p5.sound.min.js"></script>
 </head>
 <body>
+    <!-- Password Overlay -->
+    <div id="password-overlay" class="password-overlay">
+        <div class="password-window">
+            <div class="password-title-bar">
+                <span class="password-title">System Access Required</span>
+            </div>
+            <div class="password-content">
+                <div class="password-message">
+                    Enter password to access system:
+                </div>
+                <input type="password" id="password-input" class="password-input" placeholder="Password...">
+                <button class="password-btn" id="password-submit">ENTER</button>
+                <div class="password-error" id="password-error" style="display: none;">
+                    Access Denied. Try Again.
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- Desktop Version -->
     <div class="desktop">
         <div class="menu-bar">
@@ -1052,6 +1191,116 @@
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+
+            // Password System
+            const correctPassword = "outerwaves"; // Change this to your desired password
+            let isAuthenticated = false;
+
+            function initPasswordSystem() {
+                const overlay = document.getElementById('password-overlay');
+                const passwordInput = document.getElementById('password-input');
+                const submitButton = document.getElementById('password-submit');
+                const errorDiv = document.getElementById('password-error');
+                
+                function checkPassword() {
+                    const enteredPassword = passwordInput.value;
+                    
+                    if (enteredPassword === correctPassword) {
+                        // Correct password
+                        isAuthenticated = true;
+                        overlay.style.display = 'none';
+                        
+                        // Now initialize the site normally
+                        initializeSiteAfterPassword();
+                    } else {
+                        // Wrong password
+                        errorDiv.style.display = 'block';
+                        passwordInput.value = '';
+                        passwordInput.focus();
+                        
+                        // Hide error after 3 seconds
+                        setTimeout(() => {
+                            errorDiv.style.display = 'none';
+                        }, 3000);
+                    }
+                }
+                
+                // Event listeners
+                submitButton.addEventListener('click', checkPassword);
+                passwordInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        checkPassword();
+                    }
+                });
+                
+                // Focus on input when page loads
+                passwordInput.focus();
+            }
+
+            function initializeSiteAfterPassword() {
+                // Detect if we're on mobile
+                const isMobile = window.innerWidth <= 800;
+
+                // Show the appropriate interface
+                document.querySelector('.desktop').style.display = isMobile ? 'none' : 'block';
+                document.querySelector('.mobile').style.display = isMobile ? 'block' : 'none';
+
+                // Initialize Desktop Version
+                if (!isMobile) {
+                    initDesktopIcons();
+                    initDesktopAudioMixer();
+                    initDesktopOrb();
+                    initDesktopUserLog();
+                    setupDesktopWindows();
+                }
+                
+                // Initialize Mobile Version
+                if (isMobile) {
+                    initMobileLogo();
+                    initMobileAudioMixer();
+                    initMobileSongMenu();
+                    fixMobileSongMenuOverflow();
+                    initMobileOrb();
+                    initMobileUserLog();
+                    setupMobileWindows();
+                    fixMobileWindowCollapse();
+                    setupCustomScrollbar();
+                }
+                
+                // Window resize handler to switch between desktop and mobile
+                let lastViewMode = window.innerWidth <= 800 ? 'mobile' : 'desktop';
+
+                window.addEventListener('resize', function() {
+                    // Only add resize handler after authentication
+                    if (!isAuthenticated) return;
+                    
+                    const currentViewMode = window.innerWidth <= 800 ? 'mobile' : 'desktop';
+                    
+                    if (currentViewMode !== lastViewMode) {
+                        console.log(`View mode changed from ${lastViewMode} to ${currentViewMode}`);
+                        
+                        if (currentViewMode === 'mobile') {
+                            document.querySelector('.desktop').style.display = 'none';
+                            document.querySelector('.mobile').style.display = 'block';
+                        } else {
+                            document.querySelector('.desktop').style.display = 'block';
+                            document.querySelector('.mobile').style.display = 'none';
+                        }
+                        
+                        lastViewMode = currentViewMode;
+                        
+                        setTimeout(function() {
+                            window.location.reload();
+                        }, 300);
+                    }
+                });
+            }
+
+            // Initialize password system first
+            initPasswordSystem();
+
+
+            /*
             // Detect if we're on mobile
             const isMobile = window.innerWidth <= 800;
 
@@ -1082,7 +1331,8 @@
             }
             
             // Window resize handler to switch between desktop and mobile
-            let lastViewMode = window.innerWidth <= 800 ? 'mobile' : 'desktop';
+            let lastViewMode = window.innerWidth <= 800 ? 'mobile' : 'desktop'; 
+            */
 
             window.addEventListener('resize', function() {
                 // Determine current view mode
@@ -1602,7 +1852,7 @@
             // Only keep the first log entry
             const logEntries = [
                 {
-                date: '2025-07-31',
+                date: '2025-03-27',
                 topic: 'WELCOME',
                 message: 'You found us.'
                 }
@@ -1794,11 +2044,10 @@
                         'assets/GTRS.mp3',
                         'assets/KEYS.mp3',
                         'assets/VOX.mp3',
-                        'assets/BVOX.mp3',
-                        'assets/ORCH.mp3'
+                        'assets/BVOX.mp3'
                     ];
                     
-                    const names = ['DRUMS', 'BASS', 'GTRS', 'KEYS', 'VOX', 'BVOX', 'ORCH'];
+                    const names = ['DRUMS', 'BASS', 'GTRS', 'KEYS', 'VOX', 'BVOX'];
                     const soundObjects = [];
                     const sliderValues = Array(sounds.length).fill(1.0);
                     let isPlaying = false;
@@ -2358,7 +2607,7 @@
             // Only keep the first log entry
             const logEntries = [
                 {
-                date: '2025-07-31',
+                date: '2025-03-27',
                 topic: 'WELCOME',
                 message: 'You found us.'
                 }
