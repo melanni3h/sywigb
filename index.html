@@ -1024,7 +1024,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/addons/p5.sound.min.js"></script>
 </head>
 <body>
-    <!-- Password Overlay -->
+
+    <!-- Password Overlay 
     <div id="password-overlay" class="password-overlay">
         <div class="password-window">
             <div class="password-title-bar">
@@ -1041,7 +1042,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
     <!-- Desktop Version -->
     <div class="desktop">
         <div class="menu-bar">
@@ -1194,7 +1195,7 @@
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-
+            /*
             // Password System
             const correctPassword = "outerwaves"; // Change this to your desired password
             let isAuthenticated = false;
@@ -1301,9 +1302,10 @@
 
             // Initialize password system first
             initPasswordSystem();
+            */ 
+           //ABOVE IS PW STUFF
 
-
-            /*
+            
             // Detect if we're on mobile
             const isMobile = window.innerWidth <= 800;
 
@@ -1335,7 +1337,7 @@
             
             // Window resize handler to switch between desktop and mobile
             let lastViewMode = window.innerWidth <= 800 ? 'mobile' : 'desktop'; 
-            */
+            
 
             window.addEventListener('resize', function() {
                 // Determine current view mode
@@ -1363,6 +1365,7 @@
                         window.location.reload();
                     }, 300); // Small delay to allow display changes to be visible
                 }
+                
             });
 
             
