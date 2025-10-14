@@ -2286,72 +2286,75 @@
                         // ===== TRACK SWITCHING =====
 
                             window.switchToTrackMobile = function(newTrackId) {
-                                const trackConfig = TRACK_CONFIGS[newTrackId];
-                                if (!trackConfig) {
-                                    console.error("Track configuration not found:", newTrackId);
-                                    return;
+                            const trackConfig = TRACK_CONFIGS[newTrackId];
+                            if (!trackConfig) {
+                                console.error("Track configuration not found:", newTrackId);
+                                return;
+                            }
+                            
+                            console.log("Switching to (mobile):", newTrackId);
+                            
+                            // PROPERLY STOP AND DISPOSE OF OLD SOUNDS
+                            soundObjects.forEach(sound => {
+                                if (sound && sound.isLoaded()) {
+                                    sound.stop();
+                                    sound.disconnect(); // Disconnect from audio context
                                 }
-                                
-                                console.log("Switching to:", newTrackId);
-                                
-                                // Stop current playback
-                                soundObjects.forEach(sound => {
-                                    if (sound && sound.isLoaded()) {
-                                        sound.stop();
-                                    }
-                                });
-                                
-                                // Reset UI
-                                const playButton = document.getElementById('mobile-play-button');
-                                playButton.textContent = "PLAY";
-                                isPlaying = false;
-
-                                // Reset sliders to default positions  
-                                document.querySelectorAll('.horizontal-thumb').forEach((thumb, index) => {
-                                    thumb.style.left = '100%'; // Full volume position
-                                    sliderValues[index] = 1.0;
-                                });
-                                
-                                // Show loading
-                                const loadingStatus = document.getElementById('mobile-loading-status');
-                                loadingStatus.style.display = "block";
-                                loadingStatus.innerHTML = "Loading track...";
-                                
-                                // Reset state
-                                soundObjects = [];
-                                filesLoaded = 0;
-                                loadingFailed = false;
-                                
-                                // Load new track
-                                trackConfig.files.forEach((filePath, index) => {
-                                    try {
-                                        const sound = p.loadSound(filePath,
-                                            () => { // Success
-                                                filesLoaded++;
-                                                loadingStatus.innerHTML = `Loading... (${filesLoaded}/${trackConfig.files.length})`;
-                                                sound.setVolume(sliderValues[index]);
-                                                
-                                                if (filesLoaded === trackConfig.files.length) {
-                                                    loadingStatus.innerHTML = "Track loaded!";
-                                                    setTimeout(() => loadingStatus.style.display = "none", 1500);
-                                                }
-                                            },
-                                            (err) => { // Error
-                                                console.error("Failed to load:", filePath, err);
-                                                filesLoaded++;
-                                                if (filesLoaded === trackConfig.files.length) {
-                                                    loadingStatus.innerHTML = "Track loaded (some files missing)";
-                                                    setTimeout(() => loadingStatus.style.display = "none", 2000);
-                                                }
+                            });
+                            
+                            // Clear the array AFTER disposing
+                            soundObjects.length = 0; // Better way to clear array
+                            
+                            // Reset UI
+                            const playButton = document.getElementById('mobile-play-button');
+                            playButton.textContent = "PLAY";
+                            isPlaying = false;
+                        
+                            // Reset sliders to default positions  
+                            document.querySelectorAll('.horizontal-thumb').forEach((thumb, index) => {
+                                thumb.style.left = '100%';
+                                sliderValues[index] = 1.0;
+                            });
+                            
+                            // Show loading
+                            const loadingStatus = document.getElementById('mobile-loading-status');
+                            loadingStatus.style.display = "block";
+                            loadingStatus.innerHTML = "Loading track...";
+                            
+                            // Reset loading state
+                            filesLoaded = 0;
+                            loadingFailed = false;
+                            
+                            // Load new track
+                            trackConfig.files.forEach((filePath, index) => {
+                                try {
+                                    const sound = p.loadSound(filePath,
+                                        () => { // Success
+                                            filesLoaded++;
+                                            loadingStatus.innerHTML = `Loading... (${filesLoaded}/${trackConfig.files.length})`;
+                                            sound.setVolume(sliderValues[index]);
+                                            
+                                            if (filesLoaded === trackConfig.files.length) {
+                                                loadingStatus.innerHTML = "Track loaded!";
+                                                setTimeout(() => loadingStatus.style.display = "none", 1500);
                                             }
-                                        );
-                                        soundObjects[index] = sound;
-                                    } catch (e) {
-                                        console.error("Error loading sound:", e);
-                                        filesLoaded++;
-                                    }
-                                });
-                            };
+                                        },
+                                        (err) => { // Error
+                                            console.error("Failed to load:", filePath, err);
+                                            filesLoaded++;
+                                            if (filesLoaded === trackConfig.files.length) {
+                                                loadingStatus.innerHTML = "Track loaded (some files missing)";
+                                                setTimeout(() => loadingStatus.style.display = "none", 2000);
+                                            }
+                                        }
+                                    );
+                                    soundObjects.push(sound); // Use push instead of direct index assignment
+                                } catch (e) {
+                                    console.error("Error loading sound:", e);
+                                    filesLoaded++;
+                                }
+                            });
+                        };
                     
 
                         // ===== RESET FUNCTION =====
