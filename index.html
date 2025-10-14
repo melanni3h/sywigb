@@ -1191,27 +1191,35 @@
         
                 function setupResponsiveHandler() {
                     let lastViewMode = window.innerWidth <= 800 ? 'mobile' : 'desktop';
-        
+                    let resizeTimeout;
+                
                     window.addEventListener('resize', function() {
-                        const currentViewMode = window.innerWidth <= 800 ? 'mobile' : 'desktop';
+                        // Clear any pending resize checks
+                        clearTimeout(resizeTimeout);
                         
-                        if (currentViewMode !== lastViewMode) {
-                            console.log(`View mode changed from ${lastViewMode} to ${currentViewMode}`);
+                        // Wait for resize to finish before checking
+                        resizeTimeout = setTimeout(function() {
+                            const currentViewMode = window.innerWidth <= 800 ? 'mobile' : 'desktop';
                             
-                            // Update display
-                            if (currentViewMode === 'mobile') {
-                                document.querySelector('.desktop').style.display = 'none';
-                                document.querySelector('.mobile').style.display = 'block';
-                            } else {
-                                document.querySelector('.desktop').style.display = 'block';
-                                document.querySelector('.mobile').style.display = 'none';
+                            // Only reload if view mode actually changed
+                            if (currentViewMode !== lastViewMode) {
+                                console.log(`View mode changed from ${lastViewMode} to ${currentViewMode}`);
+                                
+                                // Update display
+                                if (currentViewMode === 'mobile') {
+                                    document.querySelector('.desktop').style.display = 'none';
+                                    document.querySelector('.mobile').style.display = 'block';
+                                } else {
+                                    document.querySelector('.desktop').style.display = 'block';
+                                    document.querySelector('.mobile').style.display = 'none';
+                                }
+                                
+                                lastViewMode = currentViewMode;
+                                
+                                // Reload for proper reinitialization
+                                setTimeout(() => window.location.reload(), 300);
                             }
-                            
-                            lastViewMode = currentViewMode;
-                            
-                            // Reload for proper reinitialization
-                            setTimeout(() => window.location.reload(), 300);
-                        }
+                        }, 250); // Wait 250ms after resize stops
                     });
                 }
         
