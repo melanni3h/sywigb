@@ -976,12 +976,12 @@
                 </div>
                 <div class="mac-menu-bar">
                     <div class="mac-menu">
-                        <div class="mac-menu-title" id="current-track">Track 2: PUSH</div>
+                        <div class="mac-menu-title" id="current-track">Track 3: CHILD</div>
                         <div class="mac-menu-dropdown">
                             <ul>
                                 <li data-track-id="track1">Track 1: MADRE</li>
-                                <li data-track-id="track2" class="selected">Track 2: PUSH</li>
-                                <li data-track="Track 3" class="disabled">Track 3</li>
+                                <li data-track-id="track2">Track 2: PUSH</li>
+                                <li data-track-id="track3" class="selected">Track 3: CHILD</li>
                                 <li data-track="Track 4" class="disabled">Track 4</li>
                                 <li data-track="Track 5" class="disabled">Track 5</li>
                             </ul>
@@ -1136,10 +1136,21 @@
                             'assets/track2/BVOX.mp3',
                             'assets/track2/ORCH.mp3'
                         ]
+                    },
+                    track3: {  
+                        files: [
+                            'assets/track3/DRUMS.mp3',
+                            'assets/track3/BASS.mp3',
+                            'assets/track3/GTRS.mp3',
+                            'assets/track3/KEYS.mp3',
+                            'assets/track3/VOX.mp3',
+                            'assets/track3/BVOX.mp3',
+                            'assets/track3/ORCH.mp3'
+                        ]
                     }
                 };
         
-                let currentTrackId = 'track2';
+                let currentTrackId = 'track3';
         
                 // ===== MAIN INITIALIZATION =====
                 const isMobile = window.innerWidth <= 800;
@@ -1336,13 +1347,13 @@
                     new p5(function(p) {
                         // ===== AUDIO MIXER VARIABLES =====
                         const sounds = [
-                            'assets/track2/DRUMS.mp3',
-                            'assets/track2/BASS.mp3',
-                            'assets/track2/GTRS.mp3',
-                            'assets/track2/KEYS.mp3',
-                            'assets/track2/VOX.mp3',
-                            'assets/track2/BVOX.mp3',
-                            'assets/track2/ORCH.mp3'
+                            'assets/track3/DRUMS.mp3',
+                            'assets/track3/BASS.mp3',
+                            'assets/track3/GTRS.mp3',
+                            'assets/track3/KEYS.mp3',
+                            'assets/track3/VOX.mp3',
+                            'assets/track3/BVOX.mp3',
+                            'assets/track3/ORCH.mp3'
                         ];
                         
                         const names = ['DRUMS', 'BASS', 'GTRS', 'KEYS', 'VOX', 'BVOX', 'ORCH'];
@@ -2049,13 +2060,13 @@
                     new p5(function(p) {
                         // ===== MOBILE MIXER VARIABLES =====
                         const sounds = [
-                            'assets/track2/DRUMS.mp3',
-                            'assets/track2/BASS.mp3',
-                            'assets/track2/GTRS.mp3',
-                            'assets/track2/KEYS.mp3',
-                            'assets/track2/VOX.mp3',
-                            'assets/track2/BVOX.mp3',
-                            'assets/track2/ORCH.mp3'
+                            'assets/track3/DRUMS.mp3',
+                            'assets/track3/BASS.mp3',
+                            'assets/track3/GTRS.mp3',
+                            'assets/track3/KEYS.mp3',
+                            'assets/track3/VOX.mp3',
+                            'assets/track3/BVOX.mp3',
+                            'assets/track3/ORCH.mp3'
                         ];
                         
                         const names = ['DRUMS', 'BASS', 'GTRS', 'KEYS', 'VOX', 'BVOX', 'ORCH'];
@@ -2367,7 +2378,7 @@
                     const tracks = [
                         { value: "Track 1: MADRE", enabled: true, trackId: "track1" },
                         { value: "Track 2: PUSH", enabled: true, trackId: "track2" },
-                        { value: "Track 3", enabled: false, trackId: "track3" },
+                        { value: "Track 3: CHILD", enabled: true, trackId: "track3" },
                         { value: "Track 4", enabled: false, trackId: "track4" },
                         { value: "Track 5", enabled: false, trackId: "track5" }
                     ];
@@ -2390,7 +2401,7 @@
                     // Create button
                     const songButton = document.createElement('div');
                     songButton.className = 'mobile-song-button';
-                    songButton.innerHTML = '<span class="track-title">Track 2: PUSH</span><span class="arrow">▼</span>';
+                    songButton.innerHTML = '<span class="track-title">Track 3: CHILD</span><span class="arrow">▼</span>';
                     
                     // Create dropdown
                     const songDropdown = document.createElement('div');
