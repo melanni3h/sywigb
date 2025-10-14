@@ -1590,7 +1590,7 @@
                             });
                         };
         
-                        window.switchToTrack = function(newTrackId) {
+                        window.switchToTrackDesktop = function(newTrackId) {
                             const trackConfig = TRACK_CONFIGS[newTrackId];
                             if (!trackConfig) {
                                 console.error("Track configuration not found:", newTrackId);
@@ -1959,19 +1959,17 @@
                         });
                     });
                 }
-
+                
                 function updateTrackSelection(menuItems, selectedItem, currentTrackElement, trackId) {
-                    // Update UI selection
                     menuItems.forEach(el => el.classList.remove('selected'));
                     selectedItem.classList.add('selected');
                     currentTrackElement.textContent = selectedItem.textContent;
                     
-                    // Update global state and switch track
                     currentTrackId = trackId;
                     console.log("Selected track:", trackId);
                     
-                    if (window.switchToTrack) {
-                        window.switchToTrack(trackId);
+                    if (window.switchToTrackDesktop) {
+                        window.switchToTrackDesktop(trackId);
                     }
                 }
 
@@ -2286,8 +2284,8 @@
                         }
 
                         // ===== TRACK SWITCHING =====
-                        if (!window.switchToTrack) {
-                            window.switchToTrack = function(newTrackId) {
+
+                            window.switchToTrackMobile = function(newTrackId) {
                                 const trackConfig = TRACK_CONFIGS[newTrackId];
                                 if (!trackConfig) {
                                     console.error("Track configuration not found:", newTrackId);
@@ -2354,7 +2352,7 @@
                                     }
                                 });
                             };
-                        }
+                    
 
                         // ===== RESET FUNCTION =====
                         window.resetMobileMixer = function() {
@@ -2444,7 +2442,7 @@
                     
                     return trackItem;
                 }
-
+                
                 function updateMobileTrackSelection(songButton, songDropdown, track) {
                     console.log("Mobile click detected for:", track.value, "trackId:", track.trackId);
                     
@@ -2458,9 +2456,9 @@
                     songDropdown.classList.remove('open');
                     songButton.querySelector('.arrow').style.transform = 'rotate(0deg)';
                     
-                    // Switch track
-                    if (window.switchToTrack && track.trackId) {
-                        window.switchToTrack(track.trackId);
+                    // Switch track using mobile-specific function
+                    if (window.switchToTrackMobile && track.trackId) {
+                        window.switchToTrackMobile(track.trackId);
                     }
                 }
 
